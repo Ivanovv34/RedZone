@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
-namespace RedZone.Web.Data.Migrations
+namespace RedZone.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {
