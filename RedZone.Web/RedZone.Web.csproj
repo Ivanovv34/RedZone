@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-RedZone.Web-be7a8400-9586-4727-8f6b-d3fe7068057e</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RedZone.Common\RedZone.Common.csproj" />
+    <ProjectReference Include="..\RedZone.Data.Models\RedZone.Data.Models.csproj" />
+    <ProjectReference Include="..\RedZone.Data\RedZone.Data.csproj" />
+    <ProjectReference Include="..\RedZone.Services.Core\RedZone.Services.Core.csproj" />
+    <ProjectReference Include="..\RedZone.ViewModels\RedZone.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="RedZone.Common/RedZone.Common.csproj" />
+  <Project Path="RedZone.Data.Models/RedZone.Data.Models.csproj" />
+  <Project Path="RedZone.Data/RedZone.Data.csproj" />
+  <Project Path="RedZone.Services.Core/RedZone.Services.Core.csproj" />
+  <Project Path="RedZone.ViewModels/RedZone.ViewModels.csproj" />
+  <Project Path="RedZone.Web/RedZone.Web.csproj" />
+</Solution>
