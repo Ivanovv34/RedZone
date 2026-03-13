@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RedZone.Data;
+using RedZone.Services.Core;
+using RedZone.Services.Core.Contracts;
 
 namespace RedZone.Web
 {
@@ -29,6 +31,8 @@ namespace RedZone.Web
             .AddEntityFrameworkStores<RedZoneDbContext>();
 
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<ICompetitionService, CompetitionService>();
 
             var app = builder.Build();
 
