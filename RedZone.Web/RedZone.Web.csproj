@@ -23,4 +23,8 @@
     <ProjectReference Include="..\RedZone.ViewModels\RedZone.ViewModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\NewFolder\" />
+  </ItemGroup>
+
 </Project>

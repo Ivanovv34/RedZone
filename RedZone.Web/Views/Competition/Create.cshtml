@@ -1,0 +1,32 @@
+@model RedZone.ViewModels.Competition.CompetitionViewModel
+
+@{
+    ViewData["Title"] = "Create Competition";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>@ViewData["Title"]</h1>
+
+            <form asp-action="Create" method="post" class="mt-4">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Competition Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter competition name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
