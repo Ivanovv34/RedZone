@@ -1,4 +1,4 @@
-﻿namespace RedZone.ViewModels
+﻿namespace RedZone.ViewModels.Competition
 {
     public class CompetitionViewModel
     {

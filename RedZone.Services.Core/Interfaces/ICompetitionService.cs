@@ -1,6 +1,6 @@
-﻿using RedZone.ViewModels;
+﻿using RedZone.ViewModels.Competition;
 
-namespace RedZone.Services.Core.Contracts
+namespace RedZone.Services.Core.Interfaces
 {
     public interface ICompetitionService
     {

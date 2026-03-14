@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RedZone.Data;
 using RedZone.Services.Core;
-using RedZone.Services.Core.Contracts;
+using RedZone.Services.Core.Interfaces;
 
 namespace RedZone.Web
 {
@@ -33,6 +33,8 @@ namespace RedZone.Web
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<ICompetitionService, CompetitionService>();
+            builder.Services.AddScoped<IMatchService, MatchService>();
+            builder.Services.AddScoped<IPredictionService, PredictionService>();
 
             var app = builder.Build();
 

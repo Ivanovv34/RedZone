@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RedZone.Data;
-using RedZone.Services.Core.Contracts;
-using RedZone.ViewModels;
+using RedZone.Services.Core.Interfaces;
+using RedZone.ViewModels.Competition;
 
 namespace RedZone.Services.Core
 {
