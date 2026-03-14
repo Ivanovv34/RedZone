@@ -2,6 +2,7 @@
 using RedZone.Data;
 using RedZone.Data.Models.Entities;
 using RedZone.Services.Core.Interfaces;
+using RedZone.ViewModels.Competition;
 using RedZone.ViewModels.Match;
 
 namespace RedZone.Services.Core
@@ -115,6 +116,17 @@ namespace RedZone.Services.Core
                 context.Matches.Remove(match);
                 await context.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<CompetitionViewModel>> GetAllCompetitionsAsync()
+        {
+            return await context.Competitions
+                .Select(c => new CompetitionViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToListAsync();
         }
     }
 }

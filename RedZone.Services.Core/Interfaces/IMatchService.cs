@@ -1,4 +1,5 @@
 ﻿using RedZone.ViewModels.Match;
+using RedZone.ViewModels.Competition;
 
 namespace RedZone.Services.Core.Interfaces
 {
@@ -17,5 +18,7 @@ namespace RedZone.Services.Core.Interfaces
         Task<MatchDeleteViewModel?> GetForDeleteAsync(int id);
 
         Task DeleteAsync(int id);
+
+        Task<IEnumerable<CompetitionViewModel>> GetAllCompetitionsAsync();
     }
 }

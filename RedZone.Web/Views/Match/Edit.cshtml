@@ -1,0 +1,58 @@
+@model RedZone.ViewModels.Match.MatchEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Match";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>@ViewData["Title"]</h1>
+
+            <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="HomeTeam" class="form-label">Home Team</label>
+                    <input asp-for="HomeTeam" class="form-control" />
+                    <span asp-validation-for="HomeTeam" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AwayTeam" class="form-label">Away Team</label>
+                    <input asp-for="AwayTeam" class="form-control" />
+                    <span asp-validation-for="AwayTeam" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MatchDate" class="form-label">Match Date</label>
+                    <input asp-for="MatchDate" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="MatchDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CompetitionId" class="form-label">Competition</label>
+                    <select asp-for="CompetitionId" class="form-control">
+                        <option value="">Select a competition</option>
+                        @foreach (var competition in Model.Competitions)
+                        {
+                            <option value="@competition.Id" selected="@(competition.Id == Model.CompetitionId)">@competition.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CompetitionId" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
