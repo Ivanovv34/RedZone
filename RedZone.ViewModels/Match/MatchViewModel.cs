@@ -11,5 +11,7 @@
         public DateTime MatchDate { get; set; }
 
         public string CompetitionName { get; set; } = null!;
+
+        public bool HasPredicted { get; set; }
     }
 }
