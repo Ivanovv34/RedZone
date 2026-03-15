@@ -1,0 +1,51 @@
+﻿@model IEnumerable<RedZone.ViewModels.Prediction.PredictionViewModel>
+
+@{
+    ViewData["Title"] = "My Predictions";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h1>@ViewData["Title"]</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <a asp-action="Index" asp-controller="Match" class="btn btn-primary">Back to Matches</a>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Match</th>
+                        <th>Date</th>
+                        <th>Your Prediction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>@p.HomeTeam vs @p.AwayTeam</td>
+                            <td>@p.MatchDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                <span class="badge bg-info">@p.PredictedHomeGoals</span>
+                                <span>:</span>
+                                <span class="badge bg-info">@p.PredictedAwayGoals</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No predictions yet. <a asp-action="Index" asp-controller="Match">Go make some predictions!</a>
+        </div>
+    }
+</div>

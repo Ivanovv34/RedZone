@@ -15,13 +15,26 @@ namespace RedZone.Services.Core
             this.context = context;
         }
 
-        public async Task AddAsync(PredictionCreateViewModel model, string userId)
+        public async Task<PredictionCreateViewModel?> GetPredictionFormAsync(int matchId)
+        {
+            return await context.Matches
+                .Where(m => m.Id == matchId)
+                .Select(m => new PredictionCreateViewModel
+                {
+                    MatchId = m.Id,
+                    HomeTeam = m.HomeTeam,
+                    AwayTeam = m.AwayTeam
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task CreateAsync(PredictionCreateViewModel model, string userId)
         {
             var prediction = new Prediction
             {
+                MatchId = model.MatchId,
                 PredictedHomeGoals = model.PredictedHomeGoals,
                 PredictedAwayGoals = model.PredictedAwayGoals,
-                MatchId = model.MatchId,
                 UserId = userId
             };
 
@@ -32,17 +45,16 @@ namespace RedZone.Services.Core
         public async Task<IEnumerable<PredictionViewModel>> GetUserPredictionsAsync(string userId)
         {
             return await context.Predictions
-                .Include(p => p.Match)
                 .Where(p => p.UserId == userId)
+                .Include(p => p.Match)
                 .Select(p => new PredictionViewModel
                 {
                     Id = p.Id,
-                    PredictedHomeGoals = p.PredictedHomeGoals,
-                    PredictedAwayGoals = p.PredictedAwayGoals,
-                    MatchId = p.MatchId,
                     HomeTeam = p.Match.HomeTeam,
                     AwayTeam = p.Match.AwayTeam,
-                    MatchDate = p.Match.MatchDate
+                    MatchDate = p.Match.MatchDate,
+                    PredictedHomeGoals = p.PredictedHomeGoals,
+                    PredictedAwayGoals = p.PredictedAwayGoals
                 })
                 .ToListAsync();
         }
