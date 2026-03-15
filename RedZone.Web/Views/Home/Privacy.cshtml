@@ -1,6 +1,67 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="page-header">
+    <h1 class="page-title">Privacy <span>Policy</span></h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4" style="line-height:1.8;">
+
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:2rem;">
+                    Last updated: March 2026
+                </p>
+
+                <h5 style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.05em; color:var(--white); margin-bottom:0.75rem;">
+                    1. What We Collect
+                </h5>
+                <p style="color:var(--text-muted);">
+                    RedZone collects the minimum data needed to provide the service: your email address and password
+                    (stored as a secure hash) when you register, and the score predictions you submit.
+                    We do not collect any payment information, location data, or personal identifiers beyond your account email.
+                </p>
+
+                <h5 style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.05em; color:var(--white); margin:1.5rem 0 0.75rem;">
+                    2. How We Use Your Data
+                </h5>
+                <p style="color:var(--text-muted);">
+                    Your data is used solely to operate the application — authenticating your account and storing
+                    your predictions so you can view them later. We do not sell, share, or use your data for
+                    advertising purposes.
+                </p>
+
+                <h5 style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.05em; color:var(--white); margin:1.5rem 0 0.75rem;">
+                    3. Cookies
+                </h5>
+                <p style="color:var(--text-muted);">
+                    RedZone uses a single session cookie to keep you logged in. No third-party tracking
+                    or analytics cookies are used.
+                </p>
+
+                <h5 style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.05em; color:var(--white); margin:1.5rem 0 0.75rem;">
+                    4. Data Storage
+                </h5>
+                <p style="color:var(--text-muted);">
+                    All data is stored in a SQL Server database hosted locally or on a private server.
+                    No data is transferred to third-party cloud providers.
+                </p>
+
+                <h5 style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.05em; color:var(--white); margin:1.5rem 0 0.75rem;">
+                    5. Your Rights
+                </h5>
+                <p style="color:var(--text-muted);">
+                    You may request deletion of your account and all associated predictions at any time
+                    by contacting the site administrator.
+                </p>
+
+                <div class="mt-4 pt-3" style="border-top:1px solid var(--border);">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-sm">← Back to Home</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

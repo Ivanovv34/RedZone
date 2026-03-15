@@ -48,6 +48,9 @@ namespace RedZone.Web.Controllers
 
             await predictionService.CreateAsync(model, userId);
 
+            TempData["Toast"] = "Prediction saved! 🎯";
+            TempData["ToastType"] = "success";
+
             return RedirectToAction(nameof(Mine));
         }
 

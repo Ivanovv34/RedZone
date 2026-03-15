@@ -1,8 +1,84 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-section">
+    <h1>RedZone</h1>
+    <p class="lead">
+        Track Liverpool FC matches, explore competitions,<br>
+        and make your own score predictions.
+    </p>
+    <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+        <a asp-controller="Match" asp-action="Index" class="btn redzone-btn btn-lg">
+            Browse Matches
+        </a>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-controller="Prediction" asp-action="Mine" class="btn btn-light btn-lg">
+                My Predictions
+            </a>
+        }
+        else
+        {
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-light btn-lg">
+                Login to Predict
+            </a>
+        }
+    </div>
+</div>
+
+<div class="row g-4 text-center mb-5">
+    <div class="col-md-4">
+        <div class="card feature-card h-100">
+            <div class="card-body">
+                <div class="mb-3" style="font-size:2.5rem;">🏆</div>
+                <h3 class="card-title">Competitions</h3>
+                <p class="card-text">
+                    Premier League, Champions League, FA Cup and more — all in one place.
+                </p>
+                <a asp-controller="Competition" asp-action="Index" class="btn btn-outline-danger mt-2">
+                    View Competitions
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card feature-card h-100">
+            <div class="card-body">
+                <div class="mb-3" style="font-size:2.5rem;">📅</div>
+                <h3 class="card-title">Matches</h3>
+                <p class="card-text">
+                    Upcoming and scheduled Liverpool fixtures with date, opponent, and competition.
+                </p>
+                <a asp-controller="Match" asp-action="Index" class="btn btn-outline-danger mt-2">
+                    View Matches
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card feature-card h-100">
+            <div class="card-body">
+                <div class="mb-3" style="font-size:2.5rem;">🎯</div>
+                <h3 class="card-title">Predictions</h3>
+                <p class="card-text">
+                    Predict match scores and track your personal record across all fixtures.
+                </p>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Prediction" asp-action="Mine" class="btn btn-outline-danger mt-2">
+                        My Predictions
+                    </a>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-danger mt-2">
+                        Register
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
 </div>

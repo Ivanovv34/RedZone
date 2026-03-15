@@ -4,41 +4,47 @@
     ViewData["Title"] = "Match Details";
 }
 
-<div class="container mt-4">
-    <div class="row mb-3">
-        <div class="col-md-8">
-            <h1>@ViewData["Title"]</h1>
-        </div>
-        <div class="col-md-4 text-end">
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
-            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-        </div>
+<div class="page-header">
+    <h1 class="page-title">Match <span>Details</span></h1>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">Delete</a>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">← Back</a>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">@Model.HomeTeam vs @Model.AwayTeam</h5>
-                </div>
-                <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-3">ID</dt>
-                        <dd class="col-sm-9">@Model.Id</dd>
+<div class="row">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">
+                @Model.HomeTeam vs @Model.AwayTeam
+            </div>
+            <div class="card-body p-4">
+                <dl class="row">
+                    <dt class="col-sm-4">Home Team</dt>
+                    <dd class="col-sm-8">@Model.HomeTeam</dd>
 
-                        <dt class="col-sm-3">Home Team</dt>
-                        <dd class="col-sm-9">@Model.HomeTeam</dd>
+                    <dt class="col-sm-4">Away Team</dt>
+                    <dd class="col-sm-8">@Model.AwayTeam</dd>
 
-                        <dt class="col-sm-3">Away Team</dt>
-                        <dd class="col-sm-9">@Model.AwayTeam</dd>
+                    <dt class="col-sm-4">Match Date</dt>
+                    <dd class="col-sm-8">@Model.MatchDate.ToString("dd MMMM yyyy, HH:mm")</dd>
 
-                        <dt class="col-sm-3">Match Date</dt>
-                        <dd class="col-sm-9">@Model.MatchDate.ToString("yyyy-MM-dd HH:mm")</dd>
+                    <dt class="col-sm-4">Competition</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge" style="background:rgba(200,16,46,0.15);color:var(--red);border:1px solid rgba(200,16,46,0.3);">
+                            @Model.CompetitionName
+                        </span>
+                    </dd>
+                </dl>
 
-                        <dt class="col-sm-3">Competition</dt>
-                        <dd class="col-sm-9">@Model.CompetitionName</dd>
-                    </dl>
+                <div class="mt-3">
+                    <a asp-controller="Prediction"
+                       asp-action="Create"
+                       asp-route-matchId="@Model.Id"
+                       class="btn btn-primary">
+                        🎯 Make Prediction
+                    </a>
                 </div>
             </div>
         </div>

@@ -4,48 +4,54 @@
     ViewData["Title"] = "My Predictions";
 }
 
-<div class="container mt-4">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <h1>@ViewData["Title"]</h1>
-        </div>
-        <div class="col-md-6 text-end">
-            <a asp-action="Index" asp-controller="Match" class="btn btn-primary">Back to Matches</a>
-        </div>
-    </div>
-
-    @if (Model.Any())
-    {
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Match</th>
-                        <th>Date</th>
-                        <th>Your Prediction</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var p in Model)
-                    {
-                        <tr>
-                            <td>@p.HomeTeam vs @p.AwayTeam</td>
-                            <td>@p.MatchDate.ToString("yyyy-MM-dd HH:mm")</td>
-                            <td>
-                                <span class="badge bg-info">@p.PredictedHomeGoals</span>
-                                <span>:</span>
-                                <span class="badge bg-info">@p.PredictedAwayGoals</span>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-info">
-            No predictions yet. <a asp-action="Index" asp-controller="Match">Go make some predictions!</a>
-        </div>
-    }
+<div class="page-header">
+    <h1 class="page-title">My <span>Predictions</span></h1>
+    <a asp-action="Index" asp-controller="Match" class="btn btn-primary">Browse Matches</a>
 </div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Match</th>
+                    <th>Date</th>
+                    <th>Your Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td style="font-weight:600;">
+                            @p.HomeTeam
+                            <span class="text-muted" style="font-weight:400;"> vs </span>
+                            @p.AwayTeam
+                        </td>
+                        <td class="match-meta">
+                            <span>📅</span>
+                            @p.MatchDate.ToString("dd MMM yyyy")
+                        </td>
+                        <td>
+                            <div class="score-badge">
+                                <span class="badge">@p.PredictedHomeGoals</span>
+                                <span class="score-colon">:</span>
+                                <span class="badge">@p.PredictedAwayGoals</span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <div style="font-size:3rem;margin-bottom:1rem;">🎯</div>
+        <h3>No Predictions Yet</h3>
+        <p>Head over to the matches list and make your first score prediction.</p>
+        <a asp-action="Index" asp-controller="Match" class="btn btn-primary mt-2">Browse Matches</a>
+    </div>
+}
