@@ -1,0 +1,20 @@
+@model RedZone.ViewModels.Match.MatchIndexViewModel
+
+<tr>
+    <td>@Model.Id</td>
+    <td>@Model.HomeTeam</td>
+    <td>@Model.AwayTeam</td>
+    <td>@Model.MatchDate.ToString("yyyy-MM-dd HH:mm")</td>
+    <td>@Model.CompetitionName</td>
+    <td>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-sm btn-info">Details</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-danger">Delete</a>
+        <a asp-controller="Prediction"
+           asp-action="Create"
+           asp-route-matchId="@Model.Id"
+           class="btn btn-success btn-sm">
+           Predict
+        </a>
+    </td>
+</tr>

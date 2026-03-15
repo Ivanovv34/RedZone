@@ -31,24 +31,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>@item.Id</td>
-                            <td>@item.HomeTeam</td>
-                            <td>@item.AwayTeam</td>
-                            <td>@item.MatchDate.ToString("yyyy-MM-dd HH:mm")</td>
-                            <td>@item.CompetitionName</td>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                                <a asp-controller="Prediction"
-                                   asp-action="Create"
-                                   asp-route-matchId="@item.Id"
-                                   class="btn btn-success btn-sm">
-                                   Predict
-                                </a>
-                            </td>
-                        </tr>
+                        @await Html.PartialAsync("_MatchCardPartial", item)
                     }
                 </tbody>
             </table>
