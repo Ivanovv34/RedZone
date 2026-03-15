@@ -20,6 +20,7 @@ namespace RedZone.Services.Core
         {
             return await context.Matches
                 .Include(m => m.Competition)
+                .OrderBy(m => m.MatchDate)
                 .Select(m => new MatchIndexViewModel
                 {
                     Id = m.Id,
