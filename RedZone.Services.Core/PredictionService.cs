@@ -50,6 +50,7 @@ namespace RedZone.Services.Core
                 .Select(p => new PredictionViewModel
                 {
                     Id = p.Id,
+                    MatchId = p.MatchId,
                     HomeTeam = p.Match.HomeTeam,
                     AwayTeam = p.Match.AwayTeam,
                     MatchDate = p.Match.MatchDate,
@@ -57,6 +58,27 @@ namespace RedZone.Services.Core
                     PredictedAwayGoals = p.PredictedAwayGoals
                 })
                 .ToListAsync();
+        }
+
+        public async Task<bool> HasUserPredictedAsync(int matchId, string userId)
+        {
+            return await context.Predictions
+                .AnyAsync(p => p.MatchId == matchId && p.UserId == userId);
+        }
+
+        public async Task<bool> DeleteAsync(int predictionId, string userId)
+        {
+            var prediction = await context.Predictions
+                .FirstOrDefaultAsync(p => p.Id == predictionId && p.UserId == userId);
+
+            if (prediction == null)
+            {
+                return false;
+            }
+
+            context.Predictions.Remove(prediction);
+            await context.SaveChangesAsync();
+            return true;
         }
     }
 }

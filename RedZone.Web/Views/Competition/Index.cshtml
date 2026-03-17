@@ -6,7 +6,10 @@
 
 <div class="page-header">
     <h1 class="page-title">Competi<span>tions</span></h1>
-    <a asp-action="Create" class="btn btn-primary">+ Add Competition</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Add Competition</a>
+    }
 </div>
 
 @if (Model.Any())
@@ -28,8 +31,11 @@
                         <strong style="color:var(--white);">@item.Name</strong>
                     </td>
                     <td class="text-end" style="white-space:nowrap;">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                        }
                     </td>
                 </tr>
             }
@@ -43,6 +49,9 @@ else
         <div style="font-size:3rem;margin-bottom:1rem;">🏆</div>
         <h3>No Competitions Yet</h3>
         <p>Add a competition to get started organising matches.</p>
-        <a asp-action="Create" class="btn btn-primary mt-2">Add Competition</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary mt-2">Add Competition</a>
+        }
     </div>
 }

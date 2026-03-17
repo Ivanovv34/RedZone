@@ -9,5 +9,9 @@ namespace RedZone.Services.Core.Interfaces
         Task CreateAsync(PredictionCreateViewModel model, string userId);
 
         Task<IEnumerable<PredictionViewModel>> GetUserPredictionsAsync(string userId);
+
+        Task<bool> HasUserPredictedAsync(int matchId, string userId);
+
+        Task<bool> DeleteAsync(int predictionId, string userId);
     }
 }

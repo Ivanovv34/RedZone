@@ -16,9 +16,9 @@ namespace RedZone.Services.Core
             this.context = context;
         }
 
-        public async Task<IEnumerable<MatchIndexViewModel>> GetAllAsync()
+        public async Task<IEnumerable<MatchIndexViewModel>> GetAllAsync(string? userId = null)
         {
-            return await context.Matches
+            var matches = await context.Matches
                 .Include(m => m.Competition)
                 .OrderBy(m => m.MatchDate)
                 .Select(m => new MatchIndexViewModel
@@ -30,6 +30,21 @@ namespace RedZone.Services.Core
                     CompetitionName = m.Competition.Name
                 })
                 .ToListAsync();
+
+            if (userId != null)
+            {
+                var predictedMatchIds = await context.Predictions
+                    .Where(p => p.UserId == userId)
+                    .Select(p => p.MatchId)
+                    .ToListAsync();
+
+                foreach (var match in matches)
+                {
+                    match.HasPredicted = predictedMatchIds.Contains(match.Id);
+                }
+            }
+
+            return matches;
         }
 
         public async Task<MatchDetailsViewModel?> GetByIdAsync(int id)

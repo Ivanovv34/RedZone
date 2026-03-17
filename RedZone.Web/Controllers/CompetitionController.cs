@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RedZone.Services.Core.Interfaces;
 using RedZone.ViewModels.Competition;
 
@@ -21,12 +22,14 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CompetitionViewModel model)
         {
             if (!ModelState.IsValid)
@@ -40,6 +43,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var model = await competitionService.GetByIdAsync(id);
@@ -53,6 +57,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, CompetitionViewModel model)
         {
             if (!ModelState.IsValid)
@@ -73,6 +78,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var model = await competitionService.GetByIdAsync(id);
@@ -86,6 +92,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var existingCompetition = await competitionService.GetByIdAsync(id);

@@ -8,7 +8,7 @@ namespace RedZone.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +28,7 @@ namespace RedZone.Web
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<RedZoneDbContext>();
 
             builder.Services.AddControllersWithViews();
@@ -63,6 +64,21 @@ namespace RedZone.Web
 
             app.MapRazorPages()
                 .WithStaticAssets();
+
+            // Seed Admin role
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+
+                var adminUser = await userManager.FindByEmailAsync("admin@redzone.com");
+                if (adminUser != null && !await userManager.IsInRoleAsync(adminUser, "Admin"))
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
 
             app.Run();
         }

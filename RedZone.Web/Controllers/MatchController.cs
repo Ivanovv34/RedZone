@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RedZone.Services.Core.Interfaces;
 using RedZone.ViewModels.Match;
 
@@ -16,11 +18,13 @@ namespace RedZone.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var model = await matchService.GetAllAsync();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var model = await matchService.GetAllAsync(userId);
             return View(model);
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
             var model = await matchService.GetByIdAsync(id);
@@ -34,6 +38,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             var competitions = await matchService.GetAllCompetitionsAsync();
@@ -47,6 +52,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(MatchCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -62,6 +68,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var model = await matchService.GetForEditAsync(id);
@@ -78,6 +85,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, MatchEditViewModel model)
         {
             if (!ModelState.IsValid)
@@ -100,6 +108,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var model = await matchService.GetForDeleteAsync(id);
@@ -113,6 +122,7 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var existingMatch = await matchService.GetForDeleteAsync(id);

@@ -11,12 +11,28 @@
         <span class="comp-badge">@Model.CompetitionName</span>
     </td>
     <td class="text-end" style="white-space:nowrap;">
-        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-sm btn-info">Details</a>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit</a>
-        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-danger">Delete</a>
-        <a asp-controller="Prediction"
-           asp-action="Create"
-           asp-route-matchId="@Model.Id"
-           class="btn btn-success btn-sm">Predict</a>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-sm btn-info">Details</a>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-danger">Delete</a>
+        }
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            @if (Model.HasPredicted)
+            {
+                <span class="btn btn-sm btn-secondary disabled">✓ Predicted</span>
+            }
+            else
+            {
+                <a asp-controller="Prediction"
+                   asp-action="Create"
+                   asp-route-matchId="@Model.Id"
+                   class="btn btn-success btn-sm">Predict</a>
+            }
+        }
     </td>
 </tr>

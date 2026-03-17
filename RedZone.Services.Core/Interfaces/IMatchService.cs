@@ -5,7 +5,7 @@ namespace RedZone.Services.Core.Interfaces
 {
     public interface IMatchService
     {
-        Task<IEnumerable<MatchIndexViewModel>> GetAllAsync();
+        Task<IEnumerable<MatchIndexViewModel>> GetAllAsync(string? userId = null);
 
         Task<MatchDetailsViewModel?> GetByIdAsync(int id);
 

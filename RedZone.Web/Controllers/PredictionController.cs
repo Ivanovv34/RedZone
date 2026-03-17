@@ -19,6 +19,15 @@ namespace RedZone.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int matchId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (await predictionService.HasUserPredictedAsync(matchId, userId))
+            {
+                TempData["Toast"] = "You already predicted this match!";
+                TempData["ToastType"] = "danger";
+                return RedirectToAction("Index", "Match");
+            }
+
             var model = await predictionService.GetPredictionFormAsync(matchId);
 
             if (model == null)
@@ -32,6 +41,15 @@ namespace RedZone.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PredictionCreateViewModel model)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (await predictionService.HasUserPredictedAsync(model.MatchId, userId))
+            {
+                TempData["Toast"] = "You already predicted this match!";
+                TempData["ToastType"] = "danger";
+                return RedirectToAction("Index", "Match");
+            }
+
             if (!ModelState.IsValid)
             {
                 var formModel = await predictionService.GetPredictionFormAsync(model.MatchId);
@@ -44,8 +62,6 @@ namespace RedZone.Web.Controllers
                 return View(model);
             }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             await predictionService.CreateAsync(model, userId);
 
             TempData["Toast"] = "Prediction saved! 🎯";
@@ -57,10 +73,28 @@ namespace RedZone.Web.Controllers
         public async Task<IActionResult> Mine()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var model = await predictionService.GetUserPredictionsAsync(userId);
-
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var success = await predictionService.DeleteAsync(id, userId);
+
+            if (success)
+            {
+                TempData["Toast"] = "Prediction removed.";
+                TempData["ToastType"] = "info";
+            }
+            else
+            {
+                TempData["Toast"] = "Prediction not found.";
+                TempData["ToastType"] = "danger";
+            }
+
+            return RedirectToAction(nameof(Mine));
         }
     }
 }

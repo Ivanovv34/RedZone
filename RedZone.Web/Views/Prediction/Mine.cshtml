@@ -18,6 +18,7 @@
                     <th>Match</th>
                     <th>Date</th>
                     <th>Your Score</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -29,8 +30,7 @@
                             <span class="text-muted" style="font-weight:400;"> vs </span>
                             @p.AwayTeam
                         </td>
-                        <td class="match-meta">
-                            <span>📅</span>
+                        <td style="color:var(--text-muted); font-size:0.9rem;">
                             @p.MatchDate.ToString("dd MMM yyyy")
                         </td>
                         <td>
@@ -39,6 +39,12 @@
                                 <span class="score-colon">:</span>
                                 <span class="badge">@p.PredictedAwayGoals</span>
                             </div>
+                        </td>
+                        <td class="text-end">
+                            <form asp-action="Delete" asp-route-id="@p.Id" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
                         </td>
                     </tr>
                 }
