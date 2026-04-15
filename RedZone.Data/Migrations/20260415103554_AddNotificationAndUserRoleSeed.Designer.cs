@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RedZone.Data;
 
@@ -11,9 +12,11 @@ using RedZone.Data;
 namespace RedZone.Data.Migrations
 {
     [DbContext(typeof(RedZoneDbContext))]
-    partial class RedZoneDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260415103554_AddNotificationAndUserRoleSeed")]
+    partial class AddNotificationAndUserRoleSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

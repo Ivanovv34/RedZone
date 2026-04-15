@@ -74,9 +74,16 @@ namespace RedZone.Web
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                 var dbContext = scope.ServiceProvider.GetRequiredService<RedZoneDbContext>();
 
-                // Seed Admin role
-                if (!await roleManager.RoleExistsAsync("Admin"))
-                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+                // Seed roles
+                string[] roles = { "Admin", "User" };
+
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
 
                 // Seed default Admin user
                 var adminEmail = "adminnew@redzone.com";
@@ -95,17 +102,20 @@ namespace RedZone.Web
                 }
 
                 if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+                {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
+                }
+
                 // Seed Competitions
                 if (!dbContext.Competitions.Any())
                 {
-                    var competitions = new List<Competition>
-                {
-                    new Competition { Name = "Premier League" },
-                    new Competition { Name = "Champions League" },
-                    new Competition { Name = "FA Cup" },
-                    new Competition { Name = "EFL Cup" }
-                };
+                    var competitions = new List<Competition> 
+                    {
+                        new Competition { Name = "Premier League" },
+                        new Competition { Name = "Champions League" },
+                        new Competition { Name = "FA Cup" },
+                        new Competition { Name = "EFL Cup" }
+                    };
 
                     await dbContext.Competitions.AddRangeAsync(competitions);
                     await dbContext.SaveChangesAsync();
@@ -120,18 +130,74 @@ namespace RedZone.Web
                     var eflCupId = dbContext.Competitions.First(c => c.Name == "EFL Cup").Id;
 
                     var matches = new List<Match>
-                {
-                    new Match { HomeTeam = "Liverpool", AwayTeam = "Manchester City", MatchDate = new DateTime(2026, 3, 20, 20, 0, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                    new Match { HomeTeam = "Arsenal", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 3, 25, 19, 45, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                    new Match { HomeTeam = "Liverpool", AwayTeam = "Real Madrid", MatchDate = new DateTime(2026, 4, 1, 21, 0, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
-                    new Match { HomeTeam = "Liverpool", AwayTeam = "Chelsea", MatchDate = new DateTime(2026, 4, 5, 17, 30, 0), CompetitionId = faCupId, Status = MatchStatus.Upcoming },
-                    new Match { HomeTeam = "Newcastle", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 4, 12, 15, 0, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                    new Match { HomeTeam = "Liverpool", AwayTeam = "PSG", MatchDate = new DateTime(2026, 4, 15, 21, 0, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
-                    new Match { HomeTeam = "Liverpool", AwayTeam = "Tottenham", MatchDate = new DateTime(2026, 4, 19, 16, 30, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                    new Match { HomeTeam = "Everton", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 4, 26, 14, 0, 0), CompetitionId = eflCupId, Status = MatchStatus.Upcoming },
-                };
+                    {
+                        new Match
+                        { 
+                            HomeTeam = "Liverpool",
+                            AwayTeam = "Manchester City",
+                            MatchDate = new DateTime(2026, 3, 20, 20, 0, 0),
+                            CompetitionId = premierLeagueId,
+                            Status = MatchStatus.Upcoming
+                        },
+                        new Match
+                        {
+                            HomeTeam = "Arsenal",
+                            AwayTeam = "Liverpool",
+                            MatchDate = new DateTime(2026, 3, 25, 19, 45, 0),
+                            CompetitionId = premierLeagueId,
+                            Status = MatchStatus.Upcoming
+                        },
+                        new Match
+                        {
+                            HomeTeam = "Liverpool",
+                            AwayTeam = "Real Madrid",
+                            MatchDate = new DateTime(2026, 4, 1, 21, 0, 0),
+                            CompetitionId = championsLeagueId,
+                            Status = MatchStatus.Upcoming
+                        },
+                        new Match
+                        { 
+                            HomeTeam = "Liverpool", 
+                            AwayTeam = "Chelsea", 
+                            MatchDate = new DateTime(2026, 4, 5, 17, 30, 0), 
+                            CompetitionId = faCupId, 
+                            Status = MatchStatus.Upcoming
+                        },
+                        new Match
+                        { 
+                            HomeTeam = "Newcastle", 
+                            AwayTeam = "Liverpool", 
+                            MatchDate = new DateTime(2026, 4, 12, 15, 0, 0), 
+                            CompetitionId = premierLeagueId, 
+                            Status = MatchStatus.Upcoming
+                        }, 
+                        new Match 
+                        { 
+                            HomeTeam = "Liverpool", 
+                            AwayTeam = "PSG", 
+                            MatchDate = new DateTime(2026, 4, 15, 21, 0, 0), 
+                            CompetitionId = championsLeagueId, 
+                            Status = MatchStatus.Upcoming
+                        }, 
+                        new Match
+                        { 
+                            HomeTeam = "Liverpool", 
+                            AwayTeam = "Tottenham", 
+                            MatchDate = new DateTime(2026, 4, 19, 16, 30, 0), 
+                            CompetitionId = premierLeagueId, 
+                            Status = MatchStatus.Upcoming
+                        }, 
+                        new Match 
+                        { 
+                            HomeTeam = "Everton", 
+                            AwayTeam = "Liverpool", 
+                            MatchDate = new DateTime(2026, 4, 26, 14, 0, 0), 
+                            CompetitionId = eflCupId, 
+                            Status = MatchStatus.Upcoming
+                        },
+                    };
 
-                    await dbContext.Matches.AddRangeAsync(matches);
+                    await dbContext.Matches.AddRangeAsync(matches); 
                     await dbContext.SaveChangesAsync();
                 }
             }
