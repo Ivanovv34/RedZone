@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <div class="alert alert-info">
+        Welcome to the RedZone admin area.
+    </div>
+
+    <div class="list-group">
+        <a asp-area="Admin" asp-controller="Competition" asp-action="Index" class="list-group-item list-group-item-action">
+            Manage Competitions
+        </a>
+        <a asp-area="Admin" asp-controller="Match" asp-action="Index" class="list-group-item list-group-item-action">
+            Manage Matches
+        </a>
+    </div>
+</div>
