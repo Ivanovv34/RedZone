@@ -6,10 +6,6 @@
 
 <div class="page-header">
     <h1 class="page-title">Competi<span>tions</span></h1>
-    @if (User.IsInRole("Admin"))
-    {
-        <a asp-action="Create" class="btn btn-primary">+ Add Competition</a>
-    }
 </div>
 
 @if (Model.Any())
@@ -19,7 +15,6 @@
             <thead>
             <tr>
                 <th>Competition</th>
-                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -29,13 +24,6 @@
                     <td>
                         <span class="comp-icon">🏆</span>
                         <strong style="color:var(--white);">@item.Name</strong>
-                    </td>
-                    <td class="text-end" style="white-space:nowrap;">
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                        }
                     </td>
                 </tr>
             }
@@ -48,10 +36,6 @@ else
     <div class="empty-state">
         <div style="font-size:3rem;margin-bottom:1rem;">🏆</div>
         <h3>No Competitions Yet</h3>
-        <p>Add a competition to get started organising matches.</p>
-        @if (User.IsInRole("Admin"))
-        {
-            <a asp-action="Create" class="btn btn-primary mt-2">Add Competition</a>
-        }
+        <p>Competitions will appear here once they are added.</p>
     </div>
 }
