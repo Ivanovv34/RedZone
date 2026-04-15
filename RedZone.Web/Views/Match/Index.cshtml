@@ -8,7 +8,7 @@
     <h1 class="page-title">Match<span>es</span></h1>
     @if (User.IsInRole("Admin"))
     {
-        <a asp-action="Create" class="btn btn-primary">+ Add Match</a>
+        <a asp-area="Admin" asp-controller="Match" asp-action="Create" class="btn btn-primary">+ Add Match</a>
     }
 </div>
 
@@ -39,7 +39,14 @@ else
     <div class="empty-state">
         <div style="font-size:3rem;margin-bottom:1rem;">📅</div>
         <h3>No Matches Yet</h3>
-        <p>Start by adding the first match to the schedule.</p>
-        <a asp-action="Create" class="btn btn-primary mt-2">Add First Match</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <p>Start by adding the first match to the schedule.</p>
+            <a asp-area="Admin" asp-controller="Match" asp-action="Create" class="btn btn-primary mt-2">Add First Match</a>
+        }
+        else
+        {
+            <p>No scheduled matches are available at the moment.</p>
+        }
     </div>
 }

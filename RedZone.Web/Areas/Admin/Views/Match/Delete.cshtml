@@ -1,0 +1,49 @@
+@model RedZone.ViewModels.Match.MatchDeleteViewModel
+
+@{
+    ViewData["Title"] = "Delete Match";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>@ViewData["Title"]</h1>
+
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">Are you sure?</h4>
+                <p>You are about to delete the match: <strong>@Model.HomeTeam vs @Model.AwayTeam</strong></p>
+                <hr>
+                <p class="mb-0">This action cannot be undone.</p>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <dl class="row">
+                        <dt class="col-sm-3">ID</dt>
+                        <dd class="col-sm-9">@Model.Id</dd>
+
+                        <dt class="col-sm-3">Home Team</dt>
+                        <dd class="col-sm-9">@Model.HomeTeam</dd>
+
+                        <dt class="col-sm-3">Away Team</dt>
+                        <dd class="col-sm-9">@Model.AwayTeam</dd>
+
+                        <dt class="col-sm-3">Match Date</dt>
+                        <dd class="col-sm-9">@Model.MatchDate.ToString("yyyy-MM-dd HH:mm")</dd>
+
+                        <dt class="col-sm-3">Competition</dt>
+                        <dd class="col-sm-9">@Model.CompetitionName</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <form asp-area="Admin" asp-controller="Match" asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <a asp-area="Admin" asp-controller="Match" asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+@model IEnumerable<RedZone.ViewModels.Match.MatchIndexViewModel>
+
+@{
+    ViewData["Title"] = "Manage Matches";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Manage <span>Matches</span></h1>
+    <a asp-area="Admin" asp-controller="Match" asp-action="Create" class="btn btn-primary">+ Add Match</a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Home</th>
+                <th>Away</th>
+                <th>Date</th>
+                <th>Competition</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="font-weight:600; color:var(--white);">@item.HomeTeam</td>
+                    <td style="font-weight:600; color:var(--white);">@item.AwayTeam</td>
+                    <td style="color:var(--text-muted); font-size:0.9rem;">
+                        @item.MatchDate.ToString("dd MMM yyyy")
+                        <span style="opacity:0.6; margin-left:4px;">@item.MatchDate.ToString("HH:mm")</span>
+                    </td>
+                    <td><span class="comp-badge">@item.CompetitionName</span></td>
+                    <td class="text-end" style="white-space:nowrap;">
+                        <a asp-area="" asp-controller="Match" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                        <a asp-area="Admin" asp-controller="Match" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-area="Admin" asp-controller="Match" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <div style="font-size:3rem;margin-bottom:1rem;">📅</div>
+        <h3>No Matches Yet</h3>
+        <p>Start by adding the first match to the schedule.</p>
+        <a asp-area="Admin" asp-controller="Match" asp-action="Create" class="btn btn-primary mt-2">Add First Match</a>
+    </div>
+}
