@@ -3,19 +3,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace RedZone.Data.Models.Entities
 {
-    public class Prediction
+    public class Comment
     {
         public int Id { get; set; }
 
-        [Range(0, 50)]
-        public int PredictedHomeGoals { get; set; }
+        [Required]
+        [StringLength(500, MinimumLength = 2)]
+        public string Content { get; set; } = null!;
 
-        [Range(0, 50)]
-        public int PredictedAwayGoals { get; set; }
-
-        public int? PointsEarned { get; set; }
-
-        public bool IsCalculated { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public int MatchId { get; set; }
 
