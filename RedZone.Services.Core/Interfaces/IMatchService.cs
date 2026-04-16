@@ -7,6 +7,8 @@ namespace RedZone.Services.Core.Interfaces
     {
         Task<IEnumerable<MatchIndexViewModel>> GetAllAsync(string? userId = null);
 
+        Task EnterResultAsync(int matchId, EnterMatchResultViewModel model);
+
         Task<MatchDetailsViewModel?> GetByIdAsync(int id);
 
         Task CreateAsync(MatchCreateViewModel model);

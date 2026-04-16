@@ -128,5 +128,56 @@ namespace RedZone.Web.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EnterResult(int id)
+        {
+            var match = await matchService.GetByIdAsync(id);
+
+            if (match == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EnterMatchResultViewModel
+            {
+                MatchId = match.Id,
+                HomeTeam = match.HomeTeam,
+                AwayTeam = match.AwayTeam
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnterResult(int id, EnterMatchResultViewModel model)
+        {
+            if (id != model.MatchId)
+            {
+                return BadRequest();
+            }
+
+            var match = await matchService.GetByIdAsync(id);
+
+            if (match == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.HomeTeam = match.HomeTeam;
+                model.AwayTeam = match.AwayTeam;
+                return View(model);
+            }
+
+            await matchService.EnterResultAsync(id, model);
+
+            TempData["Toast"] = "Match result saved.";
+            TempData["ToastType"] = "success";
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

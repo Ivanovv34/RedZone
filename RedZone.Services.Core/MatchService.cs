@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RedZone.Data;
 using RedZone.Data.Models.Entities;
+using RedZone.Data.Models.Enums;
 using RedZone.Services.Core.Interfaces;
 using RedZone.ViewModels.Competition;
 using RedZone.ViewModels.Match;
@@ -27,7 +28,8 @@ namespace RedZone.Services.Core
                     HomeTeam = m.HomeTeam,
                     AwayTeam = m.AwayTeam,
                     MatchDate = m.MatchDate,
-                    CompetitionName = m.Competition.Name
+                    CompetitionName = m.Competition.Name,
+                    Status = m.Status
                 })
                 .ToListAsync();
 
@@ -143,6 +145,39 @@ namespace RedZone.Services.Core
                     Name = c.Name
                 })
                 .ToListAsync();
+        }
+
+        public async Task EnterResultAsync(int matchId, EnterMatchResultViewModel model)
+        {
+            var match = await context.Matches
+                .Include(m => m.Result)
+                .FirstOrDefaultAsync(m => m.Id == matchId);
+
+            if (match == null)
+            {
+                throw new ArgumentException("Match not found.");
+            }
+
+            if (match.Result == null)
+            {
+                match.Result = new MatchResult
+                {
+                    MatchId = matchId,
+                    HomeGoals = model.HomeGoals,
+                    AwayGoals = model.AwayGoals,
+                    EnteredAt = DateTime.UtcNow
+                };
+            }
+            else
+            {
+                match.Result.HomeGoals = model.HomeGoals;
+                match.Result.AwayGoals = model.AwayGoals;
+                match.Result.EnteredAt = DateTime.UtcNow;
+            }
+
+            match.Status = MatchStatus.Finished;
+
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -24,7 +24,9 @@ namespace RedZone.ViewModels.Match
         public DateTime MatchDate { get; set; }
 
         [Required(ErrorMessage = ValidationConstants.Match.CompetitionRequiredError)]
-        [Range(1, int.MaxValue, ErrorMessage = ValidationConstants.Match.CompetitionInvalidError)]
+        [Range(ValidationConstants.Match.CompetitionIdMin,
+            ValidationConstants.Match.CompetitionIdMax,
+            ErrorMessage = ValidationConstants.Match.CompetitionInvalidError)]
         public int CompetitionId { get; set; }
 
         public IEnumerable<CompetitionViewModel> Competitions { get; set; }

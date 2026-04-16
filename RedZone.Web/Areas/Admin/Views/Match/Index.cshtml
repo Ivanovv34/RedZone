@@ -34,6 +34,10 @@
                     </td>
                     <td><span class="comp-badge">@item.CompetitionName</span></td>
                     <td class="text-end" style="white-space:nowrap;">
+                        @if (item.Status == RedZone.Data.Models.Enums.MatchStatus.Upcoming)
+                        {
+                            <a asp-area="Admin" asp-controller="Match" asp-action="EnterResult" asp-route-id="@item.Id" class="btn btn-sm btn-success">Enter Result</a>
+                        }
                         <a asp-area="" asp-controller="Match" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
                         <a asp-area="Admin" asp-controller="Match" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
                         <a asp-area="Admin" asp-controller="Match" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>

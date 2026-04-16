@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RedZone.Common\RedZone.Common.csproj" />
+    <ProjectReference Include="..\RedZone.Data.Models\RedZone.Data.Models.csproj" />
   </ItemGroup>
 
 </Project>
