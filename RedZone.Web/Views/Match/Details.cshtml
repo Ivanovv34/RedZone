@@ -7,8 +7,11 @@
 <div class="page-header">
     <h1 class="page-title">Match <span>Details</span></h1>
     <div class="d-flex gap-2">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
-        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">Delete</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-area="Admin" asp-controller="Match" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
+            <a asp-area="Admin" asp-controller="Match" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">Delete</a>
+        }
         <a asp-action="Index" class="btn btn-secondary btn-sm">← Back</a>
     </div>
 </div>

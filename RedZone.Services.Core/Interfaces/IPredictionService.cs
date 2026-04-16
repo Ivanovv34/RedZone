@@ -13,5 +13,9 @@ namespace RedZone.Services.Core.Interfaces
         Task<bool> HasUserPredictedAsync(int matchId, string userId);
 
         Task<bool> DeleteAsync(int predictionId, string userId);
+
+        Task CalculatePointsAsync(int matchId);
+
+        Task<UserStatsViewModel> GetUserStatsAsync(string userId);
     }
 }

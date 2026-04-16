@@ -15,5 +15,13 @@
         public int PredictedHomeGoals { get; set; }
 
         public int PredictedAwayGoals { get; set; }
+
+        public int? PointsEarned { get; set; }
+
+        public bool IsCalculated { get; set; }
+
+        public int? ActualHomeGoals { get; set; }
+
+        public int? ActualAwayGoals { get; set; }
     }
 }
