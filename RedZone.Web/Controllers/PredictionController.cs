@@ -38,6 +38,7 @@ namespace RedZone.Web.Controllers
             return View(model);
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> Create(PredictionCreateViewModel model)
         {
@@ -77,6 +78,7 @@ namespace RedZone.Web.Controllers
             return View(model);
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {

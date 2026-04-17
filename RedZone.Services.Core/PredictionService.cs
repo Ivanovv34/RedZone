@@ -172,6 +172,33 @@ namespace RedZone.Services.Core
             };
         }
 
+        public async Task<IEnumerable<LeaderboardEntryViewModel>> GetLeaderboardAsync()
+        {
+            var leaderboard = await this.context.Predictions
+                .Where(p => p.IsCalculated)
+                .GroupBy(p => new { p.UserId, p.User.UserName })
+                .Select(g => new LeaderboardEntryViewModel
+                {
+                    UserId = g.Key.UserId,
+                    UserName = g.Key.UserName ?? "Unknown",
+                    TotalPoints = g.Sum(p => p.PointsEarned ?? 0),
+                    TotalPredictions = g.Count(),
+                    ExactScores = g.Count(p => p.PointsEarned == 3),
+                    CorrectResults = g.Count(p => p.PointsEarned == 1)
+                })
+                .OrderByDescending(x => x.TotalPoints)
+                .ThenByDescending(x => x.ExactScores)
+                .ThenByDescending(x => x.TotalPredictions)
+                .ToListAsync();
+
+            for (int i = 0; i < leaderboard.Count; i++)
+            {
+                leaderboard[i].Position = i + 1;
+            }
+
+            return leaderboard;
+        }
+
         private static int GetOutcome(int homeGoals, int awayGoals)
         {
             if (homeGoals > awayGoals)

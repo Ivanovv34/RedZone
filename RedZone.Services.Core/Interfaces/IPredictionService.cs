@@ -17,5 +17,7 @@ namespace RedZone.Services.Core.Interfaces
         Task CalculatePointsAsync(int matchId);
 
         Task<UserStatsViewModel> GetUserStatsAsync(string userId);
+
+        Task<IEnumerable<LeaderboardEntryViewModel>> GetLeaderboardAsync();
     }
 }
