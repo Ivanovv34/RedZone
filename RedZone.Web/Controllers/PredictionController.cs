@@ -19,84 +19,96 @@ namespace RedZone.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int matchId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (await predictionService.HasUserPredictedAsync(matchId, userId))
+            if (await this.predictionService.HasUserPredictedAsync(matchId, userId))
             {
-                TempData["Toast"] = "You already predicted this match!";
-                TempData["ToastType"] = "danger";
-                return RedirectToAction("Index", "Match");
+                this.TempData["Toast"] = "You already predicted this match!";
+                this.TempData["ToastType"] = "danger";
+                return this.RedirectToAction("Index", "Match");
             }
 
-            var model = await predictionService.GetPredictionFormAsync(matchId);
+            var model = await this.predictionService.GetPredictionFormAsync(matchId);
 
             if (model == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            return View(model);
+            return this.View(model);
         }
 
-        [ValidateAntiForgeryToken]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PredictionCreateViewModel model)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (await predictionService.HasUserPredictedAsync(model.MatchId, userId))
+            if (await this.predictionService.HasUserPredictedAsync(model.MatchId, userId))
             {
-                TempData["Toast"] = "You already predicted this match!";
-                TempData["ToastType"] = "danger";
-                return RedirectToAction("Index", "Match");
+                this.TempData["Toast"] = "You already predicted this match!";
+                this.TempData["ToastType"] = "danger";
+                return this.RedirectToAction("Index", "Match");
             }
 
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                var formModel = await predictionService.GetPredictionFormAsync(model.MatchId);
+                var formModel = await this.predictionService.GetPredictionFormAsync(model.MatchId);
+
                 if (formModel != null)
                 {
                     formModel.PredictedHomeGoals = model.PredictedHomeGoals;
                     formModel.PredictedAwayGoals = model.PredictedAwayGoals;
                     model = formModel;
                 }
-                return View(model);
+
+                return this.View(model);
             }
 
-            await predictionService.CreateAsync(model, userId);
+            await this.predictionService.CreateAsync(model, userId);
 
-            TempData["Toast"] = "Prediction saved! 🎯";
-            TempData["ToastType"] = "success";
+            this.TempData["Toast"] = "Prediction saved! 🎯";
+            this.TempData["ToastType"] = "success";
 
-            return RedirectToAction(nameof(Mine));
+            return this.RedirectToAction(nameof(Mine));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Mine()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var model = await predictionService.GetUserPredictionsAsync(userId);
-            return View(model);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var predictions = await this.predictionService.GetUserPredictionsAsync(userId);
+            var stats = await this.predictionService.GetUserStatsAsync(userId);
+
+            var model = new PredictionMineViewModel
+            {
+                Predictions = predictions,
+                Stats = stats
+            };
+
+            return this.View(model);
         }
 
-        [ValidateAntiForgeryToken]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var success = await predictionService.DeleteAsync(id, userId);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var success = await this.predictionService.DeleteAsync(id, userId);
 
             if (success)
             {
-                TempData["Toast"] = "Prediction removed.";
-                TempData["ToastType"] = "info";
+                this.TempData["Toast"] = "Prediction removed.";
+                this.TempData["ToastType"] = "info";
             }
             else
             {
-                TempData["Toast"] = "Prediction not found.";
-                TempData["ToastType"] = "danger";
+                this.TempData["Toast"] = "Prediction not found.";
+                this.TempData["ToastType"] = "danger";
             }
 
-            return RedirectToAction(nameof(Mine));
+            return this.RedirectToAction(nameof(Mine));
         }
     }
 }

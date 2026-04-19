@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RedZone.ViewModels.Prediction.PredictionViewModel>
+﻿@model RedZone.ViewModels.Prediction.PredictionMineViewModel
 
 @{
     ViewData["Title"] = "My Predictions";
@@ -9,7 +9,52 @@
     <a asp-action="Index" asp-controller="Match" class="btn btn-primary">Browse Matches</a>
 </div>
 
-@if (Model.Any())
+@if (Model.Stats.TotalPredictions == 0)
+{
+    <div class="alert alert-info mb-4">
+        You haven't made any predictions yet.
+    </div>
+}
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Total Predictions</h6>
+                <h3 class="mb-0">@Model.Stats.TotalPredictions</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Exact Scores</h6>
+                <h3 class="mb-0">@Model.Stats.ExactScores</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Correct Results</h6>
+                <h3 class="mb-0">@Model.Stats.CorrectResults</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center h-100 bg-success text-white">
+            <div class="card-body">
+                <h6 class="mb-2">Total Points</h6>
+                <h3 class="mb-0">@Model.Stats.TotalPoints</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Predictions.Any())
 {
     <div class="table-responsive">
         <table class="table table-hover align-middle">
@@ -18,11 +63,14 @@
                     <th>Match</th>
                     <th>Date</th>
                     <th>Your Score</th>
+                    <th>Actual Score</th>
+                    <th>Points</th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var p in Model)
+                @foreach (var p in Model.Predictions)
                 {
                     <tr>
                         <td style="font-weight:600;">
@@ -30,9 +78,11 @@
                             <span class="text-muted" style="font-weight:400;"> vs </span>
                             @p.AwayTeam
                         </td>
+
                         <td style="color:var(--text-muted); font-size:0.9rem;">
                             @p.MatchDate.ToString("dd MMM yyyy")
                         </td>
+
                         <td>
                             <div class="score-badge">
                                 <span class="badge">@p.PredictedHomeGoals</span>
@@ -40,6 +90,44 @@
                                 <span class="badge">@p.PredictedAwayGoals</span>
                             </div>
                         </td>
+
+                        <td>
+                            @if (p.ActualHomeGoals.HasValue && p.ActualAwayGoals.HasValue)
+                            {
+                                <div class="score-badge">
+                                    <span class="badge bg-dark">@p.ActualHomeGoals</span>
+                                    <span class="score-colon">:</span>
+                                    <span class="badge bg-dark">@p.ActualAwayGoals</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Pending</span>
+                            }
+                        </td>
+
+                        <td>
+                            @if (p.IsCalculated)
+                            {
+                                <span class="badge bg-success">@p.PointsEarned</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">-</span>
+                            }
+                        </td>
+
+                        <td>
+                            @if (p.IsCalculated)
+                            {
+                                <span class="badge bg-info text-dark">Scored</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Waiting</span>
+                            }
+                        </td>
+
                         <td class="text-end">
                             <form asp-action="Delete" asp-route-id="@p.Id" method="post" style="display:inline;">
                                 @Html.AntiForgeryToken()
