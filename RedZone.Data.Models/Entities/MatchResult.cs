@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using RedZone.Common;
 
 namespace RedZone.Data.Models.Entities
 {
@@ -6,10 +7,12 @@ namespace RedZone.Data.Models.Entities
     {
         public int Id { get; set; }
 
-        [Range(0, 50)]
+        [Range(ValidationConstants.MatchResult.GoalsMin,
+            ValidationConstants.MatchResult.GoalsMax)]
         public int HomeGoals { get; set; }
 
-        [Range(0, 50)]
+        [Range(ValidationConstants.MatchResult.GoalsMin,
+            ValidationConstants.MatchResult.GoalsMax)]
         public int AwayGoals { get; set; }
 
         public DateTime EnteredAt { get; set; } = DateTime.UtcNow;

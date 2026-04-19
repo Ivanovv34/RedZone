@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using RedZone.Common;
 using RedZone.Data.Models.Enums;
 
 namespace RedZone.Data.Models.Entities
@@ -8,11 +9,11 @@ namespace RedZone.Data.Models.Entities
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(ValidationConstants.Match.TeamNameMaxLength)]
         public string HomeTeam { get; set; } = null!;
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(ValidationConstants.Match.TeamNameMaxLength)]
         public string AwayTeam { get; set; } = null!;
 
         public DateTime MatchDate { get; set; }

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
+using RedZone.Common;
 
 namespace RedZone.Data.Models.Entities
 {
@@ -8,7 +8,7 @@ namespace RedZone.Data.Models.Entities
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(ValidationConstants.Competition.NameMaxLength)]
         public string Name { get; set; } = null!;
 
         public ICollection<Match> Matches { get; set; } = new List<Match>();

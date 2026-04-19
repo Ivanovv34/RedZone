@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using RedZone.Common;
 
 namespace RedZone.Data.Models.Entities
 {
@@ -8,7 +9,8 @@ namespace RedZone.Data.Models.Entities
         public int Id { get; set; }
 
         [Required]
-        [StringLength(500, MinimumLength = 2)]
+        [StringLength(ValidationConstants.Comment.ContentMaxLength,
+            MinimumLength = ValidationConstants.Comment.ContentMinLength)]
         public string Content { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

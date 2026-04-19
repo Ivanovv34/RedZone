@@ -8,10 +8,14 @@ namespace RedZone.Web.Controllers
     public class MatchController : Controller
     {
         private readonly IMatchService matchService;
+        private readonly ICommentService commentService;
 
-        public MatchController(IMatchService matchService)
+        public MatchController(
+            IMatchService matchService,
+            ICommentService commentService)
         {
             this.matchService = matchService;
+            this.commentService = commentService;
         }
 
         [HttpGet]
@@ -33,6 +37,12 @@ namespace RedZone.Web.Controllers
             {
                 return this.NotFound();
             }
+
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            bool isAdmin = this.User.IsInRole("Admin");
+
+            model.Comments = await this.commentService.GetMatchCommentsAsync(id, userId, isAdmin);
+            model.NewComment.MatchId = id;
 
             return this.View(model);
         }

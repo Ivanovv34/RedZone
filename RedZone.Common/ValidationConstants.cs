@@ -23,6 +23,19 @@
             public const string NameLengthError = "Name must be between 2 and 100 characters.";
         }
 
+        public static class Comment
+        {
+            public const int ContentMinLength = 2;
+            public const int ContentMaxLength = 500;
+            public const string ContentRequiredError = "Comment content is required.";
+            public const string ContentLengthError = "Comment must be between 2 and 500 characters.";
+        }
+
+        public static class Notification
+        {
+            public const int MessageMaxLength = 250;
+        }
+
         public static class Prediction
         {
             public const int GoalsMin = 0;
@@ -39,6 +52,12 @@
             public const string HomeGoalsRequiredError = "Home goals are required.";
             public const string AwayGoalsRequiredError = "Away goals are required.";
             public const string GoalsRangeError = "Goals must be between 0 and 50.";
+        }
+
+        public static class PredictionEntity
+        {
+            public const int GoalsMin = 0;
+            public const int GoalsMax = 50;
         }
     }
 }

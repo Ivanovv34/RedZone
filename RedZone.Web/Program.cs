@@ -38,6 +38,7 @@ namespace RedZone.Web
             builder.Services.AddScoped<ICompetitionService, CompetitionService>();
             builder.Services.AddScoped<IMatchService, MatchService>();
             builder.Services.AddScoped<IPredictionService, PredictionService>();
+            builder.Services.AddScoped<ICommentService, CommentService>();
 
             var app = builder.Build();
 

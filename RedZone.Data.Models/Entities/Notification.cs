@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using RedZone.Common;
 
 namespace RedZone.Data.Models.Entities
 {
@@ -8,7 +9,7 @@ namespace RedZone.Data.Models.Entities
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(250)]
+        [MaxLength(ValidationConstants.Notification.MessageMaxLength)]
         public string Message { get; set; } = null!;
 
         public bool IsRead { get; set; }

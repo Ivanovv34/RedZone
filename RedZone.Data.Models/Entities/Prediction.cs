@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using RedZone.Common;
 
 namespace RedZone.Data.Models.Entities
 {
@@ -7,10 +8,12 @@ namespace RedZone.Data.Models.Entities
     {
         public int Id { get; set; }
 
-        [Range(0, 50)]
+        [Range(ValidationConstants.PredictionEntity.GoalsMin,
+            ValidationConstants.PredictionEntity.GoalsMax)]
         public int PredictedHomeGoals { get; set; }
 
-        [Range(0, 50)]
+        [Range(ValidationConstants.PredictionEntity.GoalsMin,
+            ValidationConstants.PredictionEntity.GoalsMax)]
         public int PredictedAwayGoals { get; set; }
 
         public int? PointsEarned { get; set; }

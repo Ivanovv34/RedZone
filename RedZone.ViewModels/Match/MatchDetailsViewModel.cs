@@ -1,4 +1,6 @@
-﻿namespace RedZone.ViewModels.Match
+﻿using RedZone.ViewModels.Comment;
+
+namespace RedZone.ViewModels.Match
 {
     public class MatchDetailsViewModel
     {
@@ -11,5 +13,11 @@
         public DateTime MatchDate { get; set; }
 
         public string CompetitionName { get; set; } = null!;
+
+        public IEnumerable<CommentViewModel> Comments { get; set; }
+            = new List<CommentViewModel>();
+
+        public CommentCreateViewModel NewComment { get; set; }
+            = new CommentCreateViewModel();
     }
 }

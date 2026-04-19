@@ -19,7 +19,7 @@ namespace RedZone.Services.Core
 
         public async Task<IEnumerable<MatchIndexViewModel>> GetAllAsync(string? userId = null)
         {
-            var matches = await context.Matches
+            var matches = await this.context.Matches
                 .Include(m => m.Competition)
                 .OrderBy(m => m.MatchDate)
                 .Select(m => new MatchIndexViewModel
@@ -35,7 +35,7 @@ namespace RedZone.Services.Core
 
             if (userId != null)
             {
-                var predictedMatchIds = await context.Predictions
+                var predictedMatchIds = await this.context.Predictions
                     .Where(p => p.UserId == userId)
                     .Select(p => p.MatchId)
                     .ToListAsync();
@@ -51,7 +51,7 @@ namespace RedZone.Services.Core
 
         public async Task<MatchDetailsViewModel?> GetByIdAsync(int id)
         {
-            return await context.Matches
+            return await this.context.Matches
                 .Include(m => m.Competition)
                 .Where(m => m.Id == id)
                 .Select(m => new MatchDetailsViewModel
@@ -75,13 +75,13 @@ namespace RedZone.Services.Core
                 CompetitionId = model.CompetitionId
             };
 
-            await context.Matches.AddAsync(match);
-            await context.SaveChangesAsync();
+            await this.context.Matches.AddAsync(match);
+            await this.context.SaveChangesAsync();
         }
 
         public async Task<MatchEditViewModel?> GetForEditAsync(int id)
         {
-            return await context.Matches
+            return await this.context.Matches
                 .Where(m => m.Id == id)
                 .Select(m => new MatchEditViewModel
                 {
@@ -96,7 +96,7 @@ namespace RedZone.Services.Core
 
         public async Task EditAsync(int id, MatchEditViewModel model)
         {
-            var match = await context.Matches.FindAsync(id);
+            var match = await this.context.Matches.FindAsync(id);
 
             if (match != null)
             {
@@ -105,13 +105,13 @@ namespace RedZone.Services.Core
                 match.MatchDate = model.MatchDate;
                 match.CompetitionId = model.CompetitionId;
 
-                await context.SaveChangesAsync();
+                await this.context.SaveChangesAsync();
             }
         }
 
         public async Task<MatchDeleteViewModel?> GetForDeleteAsync(int id)
         {
-            return await context.Matches
+            return await this.context.Matches
                 .Include(m => m.Competition)
                 .Where(m => m.Id == id)
                 .Select(m => new MatchDeleteViewModel
@@ -127,18 +127,18 @@ namespace RedZone.Services.Core
 
         public async Task DeleteAsync(int id)
         {
-            var match = await context.Matches.FindAsync(id);
+            var match = await this.context.Matches.FindAsync(id);
 
             if (match != null)
             {
-                context.Matches.Remove(match);
-                await context.SaveChangesAsync();
+                this.context.Matches.Remove(match);
+                await this.context.SaveChangesAsync();
             }
         }
 
         public async Task<IEnumerable<CompetitionViewModel>> GetAllCompetitionsAsync()
         {
-            return await context.Competitions
+            return await this.context.Competitions
                 .Select(c => new CompetitionViewModel
                 {
                     Id = c.Id,
@@ -149,7 +149,7 @@ namespace RedZone.Services.Core
 
         public async Task EnterResultAsync(int matchId, EnterMatchResultViewModel model)
         {
-            var match = await context.Matches
+            var match = await this.context.Matches
                 .Include(m => m.Result)
                 .FirstOrDefaultAsync(m => m.Id == matchId);
 
@@ -177,7 +177,7 @@ namespace RedZone.Services.Core
 
             match.Status = MatchStatus.Finished;
 
-            await context.SaveChangesAsync();
+            await this.context.SaveChangesAsync();
         }
     }
 }
