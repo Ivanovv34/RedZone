@@ -57,18 +57,31 @@
                 Comments
             </div>
             <div class="card-body">
-                <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
-                    @Html.AntiForgeryToken()
-                    <input asp-for="NewComment.MatchId" type="hidden" />
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
+                        @Html.AntiForgeryToken()
 
-                    <div class="mb-3">
-                        <label asp-for="NewComment.Content" class="form-label">Add comment</label>
-                        <textarea asp-for="NewComment.Content" class="form-control" rows="4" placeholder="Write your comment..."></textarea>
-                        <span asp-validation-for="NewComment.Content" class="text-danger"></span>
+                        <input type="hidden" name="MatchId" value="@Model.Id" />
+
+                        <div class="mb-3">
+                            <label for="Content" class="form-label">Add comment</label>
+                            <textarea name="Content"
+                                      id="Content"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Write your comment..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-secondary">
+                        Please log in to post a comment.
                     </div>
-
-                    <button type="submit" class="btn btn-primary">Post Comment</button>
-                </form>
+                }
 
                 @if (!Model.Comments.Any())
                 {
