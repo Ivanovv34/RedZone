@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "404 - Not Found";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center">
+
+        <div style="font-size:5rem; margin-bottom:1rem; line-height:1;">🔎</div>
+
+        <h1 style="font-family:'Bebas Neue',sans-serif; font-size:5rem; letter-spacing:0.05em; color:var(--red); margin-bottom:0;">
+            404
+        </h1>
+
+        <p style="color:var(--text-muted); font-size:1.2rem; margin-bottom:0.75rem;">
+            The page you are looking for could not be found.
+        </p>
+
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:2rem;">
+            It may have been moved, deleted, or the URL might be incorrect.
+        </p>
+
+        <div class="card mb-4" style="text-align:left;">
+            <div class="card-body p-4">
+                <h5 style="font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.05em; color:var(--white); margin-bottom:0.75rem;">
+                    What can you do next?
+                </h5>
+                <ul style="color:var(--text-muted); margin-bottom:0; padding-left:1.25rem;">
+                    <li>Check the address in the browser.</li>
+                    <li>Go back to the previous page.</li>
+                    <li>Return to the homepage and continue browsing.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                ← Back to Home
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                Go Back
+            </a>
+        </div>
+
+    </div>
+</div>
