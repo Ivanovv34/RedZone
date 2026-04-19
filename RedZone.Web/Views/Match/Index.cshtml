@@ -1,4 +1,4 @@
-@model IEnumerable<RedZone.ViewModels.Match.MatchIndexViewModel>
+@model RedZone.ViewModels.Match.MatchIndexPageViewModel
 
 @{
     ViewData["Title"] = "Matches";
@@ -12,27 +12,49 @@
     }
 </div>
 
-@if (Model.Any())
+@if (Model.Matches.Any())
 {
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead>
-            <tr>
-                <th>Home</th>
-                <th>Away</th>
-                <th>Date</th>
-                <th>Competition</th>
-                <th></th>
-            </tr>
+                <tr>
+                    <th>Home</th>
+                    <th>Away</th>
+                    <th>Date</th>
+                    <th>Competition</th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var item in Model)
-            {
-                @await Html.PartialAsync("_MatchCardPartial", item)
-            }
+                @foreach (var item in Model.Matches)
+                {
+                    @await Html.PartialAsync("_MatchCardPartial", item)
+                }
             </tbody>
         </table>
     </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
 }
 else
 {

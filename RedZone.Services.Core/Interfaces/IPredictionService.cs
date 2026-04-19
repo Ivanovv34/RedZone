@@ -10,6 +10,11 @@ namespace RedZone.Services.Core.Interfaces
 
         Task<IEnumerable<PredictionViewModel>> GetUserPredictionsAsync(string userId);
 
+        Task<PredictionMineViewModel> GetUserPredictionsPagedAsync(
+            string userId,
+            int page = 1,
+            int pageSize = 10);
+
         Task<bool> HasUserPredictedAsync(int matchId, string userId);
 
         Task<bool> DeleteAsync(int predictionId, string userId);

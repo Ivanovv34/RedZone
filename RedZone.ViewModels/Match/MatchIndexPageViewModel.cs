@@ -1,12 +1,9 @@
-﻿namespace RedZone.ViewModels.Prediction
+﻿namespace RedZone.ViewModels.Match
 {
-    public class PredictionMineViewModel
+    public class MatchIndexPageViewModel
     {
-        public IEnumerable<PredictionViewModel> Predictions { get; set; }
-            = new List<PredictionViewModel>();
-
-        public UserStatsViewModel Stats { get; set; }
-            = new UserStatsViewModel();
+        public IEnumerable<MatchIndexViewModel> Matches { get; set; }
+            = new List<MatchIndexViewModel>();
 
         public int CurrentPage { get; set; }
 

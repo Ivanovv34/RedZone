@@ -74,18 +74,12 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Mine()
+        public async Task<IActionResult> Mine(int page = 1)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var predictions = await this.predictionService.GetUserPredictionsAsync(userId);
-            var stats = await this.predictionService.GetUserStatsAsync(userId);
-
-            var model = new PredictionMineViewModel
-            {
-                Predictions = predictions,
-                Stats = stats
-            };
+            var model = await this.predictionService.GetUserPredictionsPagedAsync(userId, page, 10);
+            model.Stats = await this.predictionService.GetUserStatsAsync(userId);
 
             return this.View(model);
         }

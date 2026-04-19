@@ -91,6 +91,65 @@ namespace RedZone.Services.Core
                 .ToListAsync();
         }
 
+        public async Task<PredictionMineViewModel> GetUserPredictionsPagedAsync(
+            string userId,
+            int page = 1,
+            int pageSize = 10)
+        {
+            if (page < 1)
+            {
+                page = 1;
+            }
+
+            var baseQuery = this.context.Predictions
+                .Where(p => p.UserId == userId)
+                .Include(p => p.Match)
+                    .ThenInclude(m => m.Result)
+                .OrderByDescending(p => p.Match.MatchDate)
+                .AsQueryable();
+
+            int totalCount = await baseQuery.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            if (totalPages == 0)
+            {
+                totalPages = 1;
+            }
+
+            if (page > totalPages)
+            {
+                page = totalPages;
+            }
+
+            var predictions = await baseQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new PredictionViewModel
+                {
+                    Id = p.Id,
+                    MatchId = p.MatchId,
+                    HomeTeam = p.Match.HomeTeam,
+                    AwayTeam = p.Match.AwayTeam,
+                    MatchDate = p.Match.MatchDate,
+                    PredictedHomeGoals = p.PredictedHomeGoals,
+                    PredictedAwayGoals = p.PredictedAwayGoals,
+                    PointsEarned = p.PointsEarned,
+                    IsCalculated = p.IsCalculated,
+                    ActualHomeGoals = p.Match.Result != null ? p.Match.Result.HomeGoals : (int?)null,
+                    ActualAwayGoals = p.Match.Result != null ? p.Match.Result.AwayGoals : (int?)null
+                })
+                .ToListAsync();
+
+            return new PredictionMineViewModel
+            {
+                Predictions = predictions,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
+        }
+
         public async Task<bool> HasUserPredictedAsync(int matchId, string userId)
         {
             return await this.context.Predictions

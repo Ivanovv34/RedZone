@@ -19,10 +19,10 @@ namespace RedZone.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var model = await this.matchService.GetAllAsync(userId);
+            var model = await this.matchService.GetAllAsync(userId, page, 10);
 
             return this.View(model);
         }

@@ -17,11 +17,37 @@ namespace RedZone.Services.Core
             this.context = context;
         }
 
-        public async Task<IEnumerable<MatchIndexViewModel>> GetAllAsync(string? userId = null)
+        public async Task<MatchIndexPageViewModel> GetAllAsync(
+            string? userId = null,
+            int page = 1,
+            int pageSize = 10)
         {
-            var matches = await this.context.Matches
+            if (page < 1)
+            {
+                page = 1;
+            }
+
+            var baseQuery = this.context.Matches
                 .Include(m => m.Competition)
                 .OrderBy(m => m.MatchDate)
+                .AsQueryable();
+
+            int totalCount = await baseQuery.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            if (totalPages == 0)
+            {
+                totalPages = 1;
+            }
+
+            if (page > totalPages)
+            {
+                page = totalPages;
+            }
+
+            var matches = await baseQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(m => new MatchIndexViewModel
                 {
                     Id = m.Id,
@@ -33,10 +59,14 @@ namespace RedZone.Services.Core
                 })
                 .ToListAsync();
 
-            if (userId != null)
+            if (userId != null && matches.Any())
             {
+                var pageMatchIds = matches
+                    .Select(m => m.Id)
+                    .ToList();
+
                 var predictedMatchIds = await this.context.Predictions
-                    .Where(p => p.UserId == userId)
+                    .Where(p => p.UserId == userId && pageMatchIds.Contains(p.MatchId))
                     .Select(p => p.MatchId)
                     .ToListAsync();
 
@@ -46,7 +76,14 @@ namespace RedZone.Services.Core
                 }
             }
 
-            return matches;
+            return new MatchIndexPageViewModel
+            {
+                Matches = matches,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
         }
 
         public async Task<MatchDetailsViewModel?> GetByIdAsync(int id)

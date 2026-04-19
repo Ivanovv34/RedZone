@@ -1,13 +1,14 @@
-﻿using RedZone.ViewModels.Match;
-using RedZone.ViewModels.Competition;
+﻿using RedZone.ViewModels.Competition;
+using RedZone.ViewModels.Match;
 
 namespace RedZone.Services.Core.Interfaces
 {
     public interface IMatchService
     {
-        Task<IEnumerable<MatchIndexViewModel>> GetAllAsync(string? userId = null);
-
-        Task EnterResultAsync(int matchId, EnterMatchResultViewModel model);
+        Task<MatchIndexPageViewModel> GetAllAsync(
+            string? userId = null,
+            int page = 1,
+            int pageSize = 10);
 
         Task<MatchDetailsViewModel?> GetByIdAsync(int id);
 
@@ -22,5 +23,7 @@ namespace RedZone.Services.Core.Interfaces
         Task DeleteAsync(int id);
 
         Task<IEnumerable<CompetitionViewModel>> GetAllCompetitionsAsync();
+
+        Task EnterResultAsync(int matchId, EnterMatchResultViewModel model);
     }
 }
