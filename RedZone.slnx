@@ -2,6 +2,7 @@
   <Project Path="RedZone.Common/RedZone.Common.csproj" />
   <Project Path="RedZone.Data.Models/RedZone.Data.Models.csproj" />
   <Project Path="RedZone.Data/RedZone.Data.csproj" />
+  <Project Path="RedZone.Services.Core.Tests/RedZone.Services.Core.Tests.csproj" Id="053f0fce-dee0-4e37-bc71-365a631a33b3" />
   <Project Path="RedZone.Services.Core/RedZone.Services.Core.csproj" />
   <Project Path="RedZone.ViewModels/RedZone.ViewModels.csproj" />
   <Project Path="RedZone.Web/RedZone.Web.csproj" />
