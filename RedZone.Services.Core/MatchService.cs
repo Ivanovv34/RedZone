@@ -18,21 +18,41 @@ namespace RedZone.Services.Core
         }
 
         public async Task<MatchIndexPageViewModel> GetAllAsync(
-            string? userId = null,
-            int page = 1,
-            int pageSize = 10)
+    string? userId = null,
+    int page = 1,
+    int pageSize = 10,
+    string? searchTerm = null,
+    string? competitionTerm = null)
         {
             if (page < 1)
             {
                 page = 1;
             }
 
-            var baseQuery = this.context.Matches
+            var query = this.context.Matches
                 .Include(m => m.Competition)
-                .OrderBy(m => m.MatchDate)
                 .AsQueryable();
 
-            int totalCount = await baseQuery.CountAsync();
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var loweredSearchTerm = searchTerm.ToLower();
+
+                query = query.Where(m =>
+                    m.HomeTeam.ToLower().Contains(loweredSearchTerm) ||
+                    m.AwayTeam.ToLower().Contains(loweredSearchTerm));
+            }
+
+            if (!string.IsNullOrWhiteSpace(competitionTerm))
+            {
+                var loweredCompetitionTerm = competitionTerm.ToLower();
+
+                query = query.Where(m =>
+                    m.Competition.Name.ToLower().Contains(loweredCompetitionTerm));
+            }
+
+            query = query.OrderBy(m => m.MatchDate);
+
+            int totalCount = await query.CountAsync();
             int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
             if (totalPages == 0)
@@ -45,7 +65,7 @@ namespace RedZone.Services.Core
                 page = totalPages;
             }
 
-            var matches = await baseQuery
+            var matches = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(m => new MatchIndexViewModel
@@ -82,7 +102,12 @@ namespace RedZone.Services.Core
                 CurrentPage = page,
                 TotalPages = totalPages,
                 PageSize = pageSize,
-                TotalCount = totalCount
+                TotalCount = totalCount,
+                Filter = new MatchFilterViewModel
+                {
+                    SearchTerm = searchTerm,
+                    CompetitionTerm = competitionTerm
+                }
             };
         }
 

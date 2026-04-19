@@ -76,93 +76,93 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-        (function () {
-            // Active nav link
-            const path = window.location.pathname.toLowerCase();
-            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
-                const href = (link.getAttribute('href') || '').toLowerCase();
-                if (href.length > 1 && path.startsWith(href)) link.classList.add('active');
-                else if (href === '/' && path === '/') link.classList.add('active');
-            });
-        })();
+            (function () {
+                const path = window.location.pathname.toLowerCase();
+                document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+                    const href = (link.getAttribute('href') || '').toLowerCase();
+                    if (href.length > 1 && path.startsWith(href)) link.classList.add('active');
+                    else if (href === '/' && path === '/') link.classList.add('active');
+                });
+            })();
 
-        function rzToast(message, type) {
-            type = type || 'success';
-            const container = document.getElementById('rz-toast-container');
-            const id = 'toast-' + Date.now();
-            const icons = { success: '✅', danger: '❌', info: 'ℹ️' };
-            container.insertAdjacentHTML('beforeend',
-                '<div id="' + id + '" class="rz-toast rz-toast--' + type + '" role="alert">' +
-                '<span class="rz-toast__icon">' + (icons[type] || 'ℹ️') + '</span>' +
-                '<span class="rz-toast__msg">' + message + '</span>' +
-                '<button class="rz-toast__close" onclick="this.parentElement.remove()">×</button>' +
-                '</div>');
-            var el = document.getElementById(id);
-            requestAnimationFrame(function () { el.classList.add('rz-toast--show'); });
-            setTimeout(function () { el.classList.remove('rz-toast--show'); setTimeout(function () { el.remove(); }, 400); }, 3500);
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // Page fade-in
-            var main = document.querySelector('main');
-            if (main) {
-                main.style.opacity = '0';
-                main.style.transform = 'translateY(12px)';
-                main.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-                requestAnimationFrame(function () { main.style.opacity = '1'; main.style.transform = 'translateY(0)'; });
+            function rzToast(message, type) {
+                type = type || 'success';
+                const container = document.getElementById('rz-toast-container');
+                const id = 'toast-' + Date.now();
+                const icons = { success: '✅', danger: '❌', info: 'ℹ️' };
+                container.insertAdjacentHTML('beforeend',
+                    '<div id="' + id + '" class="rz-toast rz-toast--' + type + '" role="alert">' +
+                    '<span class="rz-toast__icon">' + (icons[type] || 'ℹ️') + '</span>' +
+                    '<span class="rz-toast__msg">' + message + '</span>' +
+                    '<button class="rz-toast__close" onclick="this.parentElement.remove()">×</button>' +
+                    '</div>');
+                var el = document.getElementById(id);
+                requestAnimationFrame(function () { el.classList.add('rz-toast--show'); });
+                setTimeout(function () { el.classList.remove('rz-toast--show'); setTimeout(function () { el.remove(); }, 400); }, 3500);
             }
 
-            // Delete confirmation
-            document.querySelectorAll('a[href*="Delete"]').forEach(function (btn) {
-                btn.addEventListener('click', function (e) {
-                    if (!confirm('Are you sure you want to delete this? This cannot be undone.')) e.preventDefault();
-                });
-            });
-
-            // Live table filter
-            var matchTable = document.querySelector('table');
-            if (matchTable) {
-                var wrapper = matchTable.closest('.table-responsive');
-                if (wrapper) {
-                    var searchBox = document.createElement('input');
-                    searchBox.type = 'text';
-                    searchBox.placeholder = 'Search…';
-                    searchBox.className = 'form-control rz-search mb-3';
-                    wrapper.parentNode.insertBefore(searchBox, wrapper);
-                    searchBox.addEventListener('input', function () {
-                        var q = this.value.toLowerCase();
-                        matchTable.querySelectorAll('tbody tr').forEach(function (row) {
-                            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
-                        });
+            document.addEventListener('DOMContentLoaded', function () {
+                var main = document.querySelector('main');
+                if (main) {
+                    main.style.opacity = '0';
+                    main.style.transform = 'translateY(12px)';
+                    main.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+                    requestAnimationFrame(function () {
+                        main.style.opacity = '1';
+                        main.style.transform = 'translateY(0)';
                     });
                 }
-            }
 
-            // Score stepper +/- buttons on prediction form
-            document.querySelectorAll('input[type="number"][min="0"]').forEach(function (input) {
-                var wrap = document.createElement('div');
-                wrap.className = 'rz-stepper';
-                input.parentNode.insertBefore(wrap, input);
-                var minus = document.createElement('button');
-                minus.type = 'button'; minus.textContent = '−'; minus.className = 'rz-stepper__btn';
-                var plus = document.createElement('button');
-                plus.type = 'button'; plus.textContent = '+'; plus.className = 'rz-stepper__btn rz-stepper__btn--plus';
-                wrap.appendChild(minus);
-                wrap.appendChild(input);
-                wrap.appendChild(plus);
-                minus.addEventListener('click', function () { var v = parseInt(input.value) || 0; if (v > 0) input.value = v - 1; });
-                plus.addEventListener('click', function () { var v = parseInt(input.value) || 0; if (v < 20) input.value = v + 1; });
+                document.querySelectorAll('a[href*="Delete"]').forEach(function (btn) {
+                    btn.addEventListener('click', function (e) {
+                        if (!confirm('Are you sure you want to delete this? This cannot be undone.')) {
+                            e.preventDefault();
+                        }
+                    });
+                });
+
+                document.querySelectorAll('input[type="number"][min="0"]').forEach(function (input) {
+                    var wrap = document.createElement('div');
+                    wrap.className = 'rz-stepper';
+
+                    input.parentNode.insertBefore(wrap, input);
+
+                    var minus = document.createElement('button');
+                    minus.type = 'button';
+                    minus.textContent = '−';
+                    minus.className = 'rz-stepper__btn';
+
+                    var plus = document.createElement('button');
+                    plus.type = 'button';
+                    plus.textContent = '+';
+                    plus.className = 'rz-stepper__btn rz-stepper__btn--plus';
+
+                    wrap.appendChild(minus);
+                    wrap.appendChild(input);
+                    wrap.appendChild(plus);
+
+                    minus.addEventListener('click', function () {
+                        var v = parseInt(input.value) || 0;
+                        if (v > 0) input.value = v - 1;
+                    });
+
+                    plus.addEventListener('click', function () {
+                        var v = parseInt(input.value) || 0;
+                        if (v < 20) input.value = v + 1;
+                    });
+                });
             });
-        });
     </script>
+
     @if (TempData["Toast"] != null)
     {
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                rzToast('@Html.Raw(TempData["Toast"])', '@(TempData["ToastType"] ?? "success")');
-            });
+                document.addEventListener('DOMContentLoaded', function () {
+                    rzToast('@TempData["Toast"]', '@(TempData["ToastType"] ?? "success")');
+                });
         </script>
     }
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -8,7 +8,9 @@ namespace RedZone.Services.Core.Interfaces
         Task<MatchIndexPageViewModel> GetAllAsync(
             string? userId = null,
             int page = 1,
-            int pageSize = 10);
+            int pageSize = 10,
+            string? searchTerm = null,
+            string? competitionTerm = null);
 
         Task<MatchDetailsViewModel?> GetByIdAsync(int id);
 
@@ -25,5 +27,7 @@ namespace RedZone.Services.Core.Interfaces
         Task<IEnumerable<CompetitionViewModel>> GetAllCompetitionsAsync();
 
         Task EnterResultAsync(int matchId, EnterMatchResultViewModel model);
+
+        
     }
 }

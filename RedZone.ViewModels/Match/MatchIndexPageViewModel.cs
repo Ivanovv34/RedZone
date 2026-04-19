@@ -13,6 +13,9 @@
 
         public int TotalCount { get; set; }
 
+        public MatchFilterViewModel Filter { get; set; }
+            = new MatchFilterViewModel();
+
         public bool HasPreviousPage => this.CurrentPage > 1;
 
         public bool HasNextPage => this.CurrentPage < this.TotalPages;
