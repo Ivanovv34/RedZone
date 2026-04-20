@@ -2,19 +2,44 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container mt-4">
-    <h1 class="mb-4">Admin Dashboard</h1>
+<div class="page-header">
+    <h1 class="page-title">Admin <span>Dashboard</span></h1>
+</div>
 
-    <div class="alert alert-info">
-        Welcome to the RedZone admin area.
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card feature-card h-100">
+            <div class="card-body">
+                <div style="font-size:2.5rem; margin-bottom:1rem;">🏆</div>
+                <h3 class="card-title">Competitions</h3>
+                <p class="card-text">Create, edit and delete competitions.</p>
+                <a asp-area="Admin" asp-controller="Competition" asp-action="Index"
+                   class="btn btn-primary mt-2">Manage Competitions</a>
+            </div>
+        </div>
     </div>
 
-    <div class="list-group">
-        <a asp-area="Admin" asp-controller="Competition" asp-action="Index" class="list-group-item list-group-item-action">
-            Manage Competitions
-        </a>
-        <a asp-area="Admin" asp-controller="Match" asp-action="Index" class="list-group-item list-group-item-action">
-            Manage Matches
-        </a>
+    <div class="col-md-4">
+        <div class="card feature-card h-100">
+            <div class="card-body">
+                <div style="font-size:2.5rem; margin-bottom:1rem;">📅</div>
+                <h3 class="card-title">Matches</h3>
+                <p class="card-text">Create, edit, delete matches and enter results.</p>
+                <a asp-area="Admin" asp-controller="Match" asp-action="Index"
+                   class="btn btn-primary mt-2">Manage Matches</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card feature-card h-100">
+            <div class="card-body">
+                <div style="font-size:2.5rem; margin-bottom:1rem;">🌐</div>
+                <h3 class="card-title">Back to Site</h3>
+                <p class="card-text">Return to the main RedZone application.</p>
+                <a asp-area="" asp-controller="Home" asp-action="Index"
+                   class="btn btn-secondary mt-2">Go to Site</a>
+            </div>
+        </div>
     </div>
 </div>

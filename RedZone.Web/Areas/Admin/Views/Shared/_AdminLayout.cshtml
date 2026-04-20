@@ -3,31 +3,45 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - RedZone Admin</title>
+    <title>@ViewData["Title"] — RedZone Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index">RedZone Admin</a>
-
-            <div class="navbar-nav">
-                <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">Dashboard</a>
-                <a class="nav-link" asp-area="Admin" asp-controller="Competition" asp-action="Index">Competitions</a>
-                <a class="nav-link" asp-area="Admin" asp-controller="Match" asp-action="Index">Matches</a>
-                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Back to Site</a>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                    ⚙️ RedZone <span style="color:var(--gold);">Admin</span>
+                </a>
+                <div class="navbar-nav ms-auto d-flex flex-row gap-1">
+                    <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">Dashboard</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Competition" asp-action="Index">Competitions</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Match" asp-action="Index">Matches</a>
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"
+                       style="color:var(--text-muted);">← Back to Site</a>
+                </div>
             </div>
+        </nav>
+    </header>
+
+    <div class="container mt-4 rz-main-wrapper">
+        <main role="main" class="pb-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer border-top mt-auto">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span>⚙️ RedZone Admin Panel</span>
+            <a asp-area="" asp-controller="Home" asp-action="Index" style="color:var(--text-muted);">Back to Site</a>
         </div>
-    </nav>
-</header>
+    </footer>
 
-<main class="py-4">
-    @RenderBody()
-</main>
-
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-@await RenderSectionAsync("Scripts", required: false)
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

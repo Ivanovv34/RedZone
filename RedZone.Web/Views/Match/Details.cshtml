@@ -18,6 +18,8 @@
 
 <div class="row g-4">
     <div class="col-lg-7">
+
+        <!-- Match Info Card -->
         <div class="card">
             <div class="card-header">
                 @Model.HomeTeam vs @Model.AwayTeam
@@ -35,9 +37,7 @@
 
                     <dt class="col-sm-4">Competition</dt>
                     <dd class="col-sm-8">
-                        <span class="badge" style="background:rgba(200,16,46,0.15);color:var(--red);border:1px solid rgba(200,16,46,0.3);">
-                            @Model.CompetitionName
-                        </span>
+                        <span class="comp-badge">@Model.CompetitionName</span>
                     </dd>
                 </dl>
 
@@ -52,57 +52,65 @@
             </div>
         </div>
 
+        <!-- Comments Card -->
         <div class="card mt-4">
             <div class="card-header">
                 Comments
+                @if (Model.Comments.Any())
+                {
+                    <span style="font-family:'Barlow',sans-serif; font-size:0.8rem; font-weight:400; color:var(--text-muted); margin-left:8px;">
+                        @Model.Comments.Count()
+                    </span>
+                }
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
+
                 @if (User.Identity?.IsAuthenticated ?? false)
                 {
                     <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
                         @Html.AntiForgeryToken()
-
                         <input type="hidden" name="MatchId" value="@Model.Id" />
 
                         <div class="mb-3">
-                            <label for="Content" class="form-label">Add comment</label>
+                            <label for="Content" class="form-label">Add Comment</label>
                             <textarea name="Content"
                                       id="Content"
                                       class="form-control"
-                                      rows="4"
+                                      rows="3"
                                       placeholder="Write your comment..."></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
                     </form>
                 }
                 else
                 {
-                    <div class="alert alert-secondary">
-                        Please log in to post a comment.
+                    <div class="alert alert-info mb-4" style="font-size:0.9rem;">
+                        <a asp-area="Identity" asp-page="/Account/Login" style="color:var(--gold);">Log in</a>
+                        to post a comment.
                     </div>
                 }
 
                 @if (!Model.Comments.Any())
                 {
-                    <div class="alert alert-info mb-0">
-                        No comments yet. Be the first to comment.
+                    <div style="text-align:center; padding:2rem 0; color:var(--text-muted);">
+                        <div style="font-size:2rem; margin-bottom:0.5rem;">💬</div>
+                        <div style="font-size:0.9rem;">No comments yet. Be the first!</div>
                     </div>
                 }
                 else
                 {
-                    <div class="d-flex flex-column gap-3">
+                    <div class="d-flex flex-column gap-3" id="comments-list">
                         @foreach (var comment in Model.Comments)
                         {
-                            <div class="border rounded p-3 bg-dark-subtle">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="comment-card">
+                                <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <strong>@comment.UserName</strong>
-                                        <div class="text-muted small">
+                                        <div class="comment-author">@comment.UserName</div>
+                                        <div class="comment-date">
                                             @comment.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
                                         </div>
                                     </div>
-
                                     @if (comment.CanDelete)
                                     {
                                         <form asp-controller="Comment"
@@ -112,20 +120,19 @@
                                               method="post"
                                               class="d-inline">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                Delete
-                                            </button>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                         </form>
                                     }
                                 </div>
-
-                                <div style="white-space: pre-wrap;">@comment.Content</div>
+                                <div class="comment-content">@comment.Content</div>
                             </div>
                         }
                     </div>
                 }
+
             </div>
         </div>
+
     </div>
 </div>
 
