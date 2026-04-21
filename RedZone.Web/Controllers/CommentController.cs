@@ -16,6 +16,7 @@ namespace RedZone.Web.Controllers
             this.commentService = commentService;
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CommentCreateViewModel model)
@@ -67,5 +68,62 @@ namespace RedZone.Web.Controllers
 
             return this.RedirectToAction("Details", "Match", new { id = matchId });
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAjax([FromBody] CommentCreateViewModel model)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = this.User.Identity?.Name ?? "Unknown";
+            bool isAdmin = this.User.IsInRole("Admin");
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(new { error = "Comment must be between 2 and 500 characters." });
+            }
+
+            var success = await this.commentService.CreateAsync(model, userId);
+
+            if (!success)
+            {
+                return this.BadRequest(new { error = "Unable to add comment." });
+            }
+
+            // Return the new comment so JS can append it immediately
+            var newComment = new CommentViewModel
+            {
+                Id = await this.commentService.GetLastCommentIdAsync(model.MatchId, userId),
+                Content = model.Content.Trim(),
+                CreatedAt = DateTime.UtcNow,
+                UserId = userId!,
+                UserName = userName,
+                CanDelete = true
+            };
+
+            return this.Json(newComment);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAjax([FromBody] DeleteCommentRequest request)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            bool isAdmin = this.User.IsInRole("Admin");
+
+            var success = await this.commentService.DeleteAsync(request.CommentId, userId, isAdmin);
+
+            if (!success)
+            {
+                return this.BadRequest(new { error = "You cannot delete this comment." });
+            }
+
+            return this.Json(new { success = true });
+        }
+    }
+
+    public class DeleteCommentRequest
+    {
+        public int CommentId { get; set; }
     }
 }

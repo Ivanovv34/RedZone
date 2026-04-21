@@ -29,7 +29,7 @@ namespace RedZone.Services.Core
                 .FirstOrDefaultAsync();
         }
 
-        public async Task CreateAsync(PredictionCreateViewModel model, string userId)
+        public async Task<bool> CreateAsync(PredictionCreateViewModel model, string userId)
         {
             var match = await this.context.Matches
                 .AsNoTracking()
@@ -37,12 +37,12 @@ namespace RedZone.Services.Core
 
             if (match == null)
             {
-                return;
+                return false;
             }
 
             if (match.Status == MatchStatus.Finished)
             {
-                return;
+                return false;
             }
 
             bool alreadyExists = await this.context.Predictions
@@ -50,7 +50,7 @@ namespace RedZone.Services.Core
 
             if (alreadyExists)
             {
-                return;
+                return false;
             }
 
             var prediction = new Prediction
@@ -65,6 +65,8 @@ namespace RedZone.Services.Core
 
             await this.context.Predictions.AddAsync(prediction);
             await this.context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<IEnumerable<PredictionViewModel>> GetUserPredictionsAsync(string userId)
@@ -96,10 +98,7 @@ namespace RedZone.Services.Core
             int page = 1,
             int pageSize = 10)
         {
-            if (page < 1)
-            {
-                page = 1;
-            }
+            if (page < 1) page = 1;
 
             var baseQuery = this.context.Predictions
                 .Where(p => p.UserId == userId)
@@ -111,15 +110,8 @@ namespace RedZone.Services.Core
             int totalCount = await baseQuery.CountAsync();
             int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            if (totalPages == 0)
-            {
-                totalPages = 1;
-            }
-
-            if (page > totalPages)
-            {
-                page = totalPages;
-            }
+            if (totalPages == 0) totalPages = 1;
+            if (page > totalPages) page = totalPages;
 
             var predictions = await baseQuery
                 .Skip((page - 1) * pageSize)
@@ -161,14 +153,10 @@ namespace RedZone.Services.Core
             var prediction = await this.context.Predictions
                 .FirstOrDefaultAsync(p => p.Id == predictionId && p.UserId == userId);
 
-            if (prediction == null)
-            {
-                return false;
-            }
+            if (prediction == null) return false;
 
             this.context.Predictions.Remove(prediction);
             await this.context.SaveChangesAsync();
-
             return true;
         }
 
@@ -179,10 +167,7 @@ namespace RedZone.Services.Core
                 .Include(m => m.Predictions)
                 .FirstOrDefaultAsync(m => m.Id == matchId);
 
-            if (match?.Result == null)
-            {
-                return;
-            }
+            if (match?.Result == null) return;
 
             int actualHomeGoals = match.Result.HomeGoals;
             int actualAwayGoals = match.Result.AwayGoals;
@@ -248,7 +233,7 @@ namespace RedZone.Services.Core
                 .OrderByDescending(x => x.TotalPoints)
                 .ThenByDescending(x => x.ExactScores)
                 .ThenByDescending(x => x.TotalPredictions)
-                .ToListAsync();
+                .ToListAsync(); 
 
             for (int i = 0; i < leaderboard.Count; i++)
             {
@@ -260,16 +245,8 @@ namespace RedZone.Services.Core
 
         private static int GetOutcome(int homeGoals, int awayGoals)
         {
-            if (homeGoals > awayGoals)
-            {
-                return 1;
-            }
-
-            if (awayGoals > homeGoals)
-            {
-                return -1;
-            }
-
+            if (homeGoals > awayGoals) return 1;
+            if (awayGoals > homeGoals) return -1;
             return 0;
         }
     }

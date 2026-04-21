@@ -84,5 +84,14 @@ namespace RedZone.Services.Core
 
             return true;
         }
+
+        public async Task<int> GetLastCommentIdAsync(int matchId, string userId)
+        {
+            return await this.context.Comments
+                .Where(c => c.MatchId == matchId && c.UserId == userId)
+                .OrderByDescending(c => c.CreatedAt)
+                .Select(c => c.Id)
+                .FirstOrDefaultAsync();
+        }
     }
 }

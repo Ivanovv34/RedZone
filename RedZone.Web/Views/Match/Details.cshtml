@@ -9,8 +9,10 @@
     <div class="d-flex gap-2">
         @if (User.IsInRole("Admin"))
         {
-            <a asp-area="Admin" asp-controller="Match" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
-            <a asp-area="Admin" asp-controller="Match" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">Delete</a>
+            <a asp-area="Admin" asp-controller="Match" asp-action="Edit"
+               asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
+            <a asp-area="Admin" asp-controller="Match" asp-action="Delete"
+               asp-route-id="@Model.Id" class="btn btn-danger btn-sm">Delete</a>
         }
         <a asp-action="Index" class="btn btn-secondary btn-sm">← Back</a>
     </div>
@@ -41,69 +43,71 @@
                     </dd>
                 </dl>
 
-                <div class="mt-3">
-                    <a asp-controller="Prediction"
-                           asp-action="Create"
-                           asp-route-matchId="@Model.Id"
-                           class="btn btn-primary">
-                        🎯 Make Prediction
-                    </a>
-                </div>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="mt-3">
+                        <a asp-controller="Prediction"
+                               asp-action="Create"
+                               asp-route-matchId="@Model.Id"
+                               class="btn btn-primary">
+                            🎯 Make Prediction
+                        </a>
+                    </div>
+                }
             </div>
         </div>
 
         <!-- Comments Card -->
         <div class="card mt-4">
-            <div class="card-header">
+            <div class="card-header d-flex align-items-center gap-2">
                 Comments
-                @if (Model.Comments.Any())
-                {
-                    <span style="font-family:'Barlow',sans-serif; font-size:0.8rem; font-weight:400; color:var(--text-muted); margin-left:8px;">
-                        @Model.Comments.Count()
-                    </span>
-                }
+                <span id="comment-count"
+                      style="font-family:'Barlow',sans-serif;font-size:0.8rem;font-weight:400;color:var(--text-muted);">
+                    @Model.Comments.Count()
+                </span>
             </div>
             <div class="card-body p-4">
 
                 @if (User.Identity?.IsAuthenticated ?? false)
                 {
-                    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="MatchId" value="@Model.Id" />
-
-                        <div class="mb-3">
-                            <label for="Content" class="form-label">Add Comment</label>
-                            <textarea name="Content"
-                                      id="Content"
-                                      class="form-control"
-                                      rows="3"
-                                      placeholder="Write your comment..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
-                    </form>
+                    <!-- AJAX comment form -->
+                    <div class="mb-4">
+                        <label class="form-label">Add Comment</label>
+                        <textarea id="comment-input"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Write your comment..."
+                                  maxlength="500"></textarea>
+                        <div id="comment-error"
+                             style="color:#ff6b82;font-size:0.8rem;margin-top:4px;display:none;"></div>
+                        <button id="post-comment-btn"
+                                class="btn btn-primary btn-sm mt-2">
+                            Post Comment
+                        </button>
+                    </div>
                 }
                 else
                 {
                     <div class="alert alert-info mb-4" style="font-size:0.9rem;">
-                        <a asp-area="Identity" asp-page="/Account/Login" style="color:var(--gold);">Log in</a>
-                        to post a comment.
+                        <a asp-area="Identity" asp-page="/Account/Login"
+                           style="color:var(--gold);">Log in</a> to post a comment.
                     </div>
                 }
 
-                @if (!Model.Comments.Any())
-                {
-                    <div style="text-align:center; padding:2rem 0; color:var(--text-muted);">
-                        <div style="font-size:2rem; margin-bottom:0.5rem;">💬</div>
-                        <div style="font-size:0.9rem;">No comments yet. Be the first!</div>
-                    </div>
-                }
-                else
-                {
-                    <div class="d-flex flex-column gap-3" id="comments-list">
+                <div id="comments-list" class="d-flex flex-column gap-3">
+                    @if (!Model.Comments.Any())
+                    {
+                        <div id="empty-comments"
+                             style="text-align:center;padding:2rem 0;color:var(--text-muted);">
+                            <div style="font-size:2rem;margin-bottom:0.5rem;">💬</div>
+                            <div style="font-size:0.9rem;">No comments yet. Be the first!</div>
+                        </div>
+                    }
+                    else
+                    {
                         @foreach (var comment in Model.Comments)
                         {
-                            <div class="comment-card">
+                            <div class="comment-card" id="comment-@comment.Id">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <div class="comment-author">@comment.UserName</div>
@@ -113,22 +117,17 @@
                                     </div>
                                     @if (comment.CanDelete)
                                     {
-                                        <form asp-controller="Comment"
-                                              asp-action="Delete"
-                                              asp-route-id="@comment.Id"
-                                              asp-route-matchId="@Model.Id"
-                                              method="post"
-                                              class="d-inline">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                        </form>
+                                        <button class="btn btn-sm btn-outline-danger delete-comment-btn"
+                                                data-comment-id="@comment.Id">
+                                            Delete
+                                        </button>
                                     }
                                 </div>
                                 <div class="comment-content">@comment.Content</div>
                             </div>
                         }
-                    </div>
-                }
+                    }
+                </div>
 
             </div>
         </div>
@@ -138,4 +137,184 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <script>
+            const matchId = @Model.Id;
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                       ?? '@Html.AntiForgeryToken()'.match(/value="([^"]+)"/)?.[1] ?? '';
+
+            // Get antiforgery token from any existing form on the page or meta tag
+            const antiForgeryToken = document.cookie
+                .split(';')
+                .map(c => c.trim())
+                .find(c => c.startsWith('XSRF-TOKEN='))?.split('=')[1]
+                ?? document.querySelector('[name=__RequestVerificationToken]')?.value ?? '';
+
+            function getToken() {
+                return document.querySelector('[name=__RequestVerificationToken]')?.value ?? '';
+            }
+
+            function formatDate(utcString) {
+                const d = new Date(utcString);
+                return d.toLocaleDateString('en-GB', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            }
+
+            function buildCommentCard(comment, canDelete) {
+                const deleteBtn = canDelete
+                    ? `<button class="btn btn-sm btn-outline-danger delete-comment-btn"
+                               data-comment-id="${comment.id}">Delete</button>`
+                    : '';
+
+                return `
+                    <div class="comment-card comment-card--new" id="comment-${comment.id}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="comment-author">${comment.userName}</div>
+                                <div class="comment-date">${formatDate(comment.createdAt)}</div>
+                            </div>
+                            ${deleteBtn}
+                        </div>
+                        <div class="comment-content">${comment.content}</div>
+                    </div>`;
+            }
+
+            // ── Post comment via AJAX ─────────────────────────────────────────
+            document.getElementById('post-comment-btn')?.addEventListener('click', async function () {
+                const input = document.getElementById('comment-input');
+                const errorEl = document.getElementById('comment-error');
+                const content = input.value.trim();
+
+                errorEl.style.display = 'none';
+
+                if (content.length < 2) {
+                    errorEl.textContent = 'Comment must be at least 2 characters.';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+                if (content.length > 500) {
+                    errorEl.textContent = 'Comment cannot exceed 500 characters.';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+
+                const btn = this;
+                btn.disabled = true;
+                btn.textContent = 'Posting...';
+
+                try {
+                    const response = await fetch('/Comment/CreateAjax', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': getToken()
+                        },
+                        body: JSON.stringify({ matchId: matchId, content: content })
+                    });
+
+                    if (!response.ok) {
+                        const err = await response.json();
+                        errorEl.textContent = err.error ?? 'Something went wrong.';
+                        errorEl.style.display = 'block';
+                        return;
+                    }
+
+                    const comment = await response.json();
+
+                    // Remove empty state if present
+                    document.getElementById('empty-comments')?.remove();
+
+                    // Prepend new comment to list
+                    const list = document.getElementById('comments-list');
+                    list.insertAdjacentHTML('afterbegin', buildCommentCard(comment, true));
+
+                    // Update count
+                    const countEl = document.getElementById('comment-count');
+                    countEl.textContent = parseInt(countEl.textContent || '0') + 1;
+
+                    // Clear input
+                    input.value = '';
+
+                    // Wire up delete on new card
+                    document.getElementById(`comment-${comment.id}`)
+                        ?.querySelector('.delete-comment-btn')
+                        ?.addEventListener('click', handleDelete);
+
+                    rzToast('Comment posted!', 'success');
+
+                } catch (e) {
+                    errorEl.textContent = 'Network error. Please try again.';
+                    errorEl.style.display = 'block';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Post Comment';
+                }
+            });
+
+            // ── Delete comment via AJAX 
+            async function handleDelete(e) {
+                const btn = e.currentTarget;
+                const commentId = parseInt(btn.dataset.commentId);
+
+                if (!confirm('Delete this comment?')) return;
+
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch('/Comment/DeleteAjax', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': getToken()
+                        },
+                        body: JSON.stringify({ commentId: commentId })
+                    });
+
+                    if (!response.ok) {
+                        const err = await response.json();
+                        rzToast(err.error ?? 'Could not delete comment.', 'danger');
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    // Animate and remove card
+                    const card = document.getElementById(`comment-${commentId}`);
+                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(10px)';
+                    setTimeout(() => card.remove(), 300);
+
+                    // Update count
+                    const countEl = document.getElementById('comment-count');
+                    const newCount = Math.max(0, parseInt(countEl.textContent || '0') - 1);
+                    countEl.textContent = newCount;
+
+                    // Show empty state if no comments left
+                    if (newCount === 0) {
+                        document.getElementById('comments-list').innerHTML = `
+                            <div id="empty-comments"
+                                 style="text-align:center;padding:2rem 0;color:var(--text-muted);">
+                                <div style="font-size:2rem;margin-bottom:0.5rem;">💬</div>
+                                <div style="font-size:0.9rem;">No comments yet. Be the first!</div>
+                            </div>`;
+                    }
+
+                    rzToast('Comment deleted.', 'info');
+
+                } catch (e) {
+                    rzToast('Network error. Please try again.', 'danger');
+                    btn.disabled = false;
+                }
+            }
+
+            // Wire up delete on existing comments
+            document.querySelectorAll('.delete-comment-btn').forEach(btn => {
+                btn.addEventListener('click', handleDelete);
+            });
+        </script>
+    }
 }

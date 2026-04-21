@@ -65,7 +65,14 @@ namespace RedZone.Web.Controllers
                 return this.View(model);
             }
 
-            await this.predictionService.CreateAsync(model, userId);
+            var success = await this.predictionService.CreateAsync(model, userId);
+
+            if (!success)
+            {
+                this.TempData["Toast"] = "Cannot predict this match — it may already be finished.";
+                this.TempData["ToastType"] = "danger";
+                return this.RedirectToAction("Index", "Match");
+            }
 
             this.TempData["Toast"] = "Prediction saved! 🎯";
             this.TempData["ToastType"] = "success";

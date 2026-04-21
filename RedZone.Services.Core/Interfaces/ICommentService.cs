@@ -12,5 +12,7 @@ namespace RedZone.Services.Core.Interfaces
         Task<bool> CreateAsync(CommentCreateViewModel model, string userId);
 
         Task<bool> DeleteAsync(int commentId, string userId, bool isAdmin);
+
+        Task<int> GetLastCommentIdAsync(int matchId, string userId);
     }
 }

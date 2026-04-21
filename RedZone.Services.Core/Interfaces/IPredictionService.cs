@@ -6,14 +6,11 @@ namespace RedZone.Services.Core.Interfaces
     {
         Task<PredictionCreateViewModel?> GetPredictionFormAsync(int matchId);
 
-        Task CreateAsync(PredictionCreateViewModel model, string userId);
+        Task<bool> CreateAsync(PredictionCreateViewModel model, string userId);
 
         Task<IEnumerable<PredictionViewModel>> GetUserPredictionsAsync(string userId);
 
-        Task<PredictionMineViewModel> GetUserPredictionsPagedAsync(
-            string userId,
-            int page = 1,
-            int pageSize = 10);
+        Task<PredictionMineViewModel> GetUserPredictionsPagedAsync(string userId, int page = 1, int pageSize = 10);
 
         Task<bool> HasUserPredictedAsync(int matchId, string userId);
 
