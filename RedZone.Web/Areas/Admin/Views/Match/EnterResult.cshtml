@@ -4,38 +4,72 @@
     ViewData["Title"] = "Enter Match Result";
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h1>@ViewData["Title"]</h1>
+<div class="page-header">
+    <h1 class="page-title">Enter <span>Result</span></h1>
+    <a asp-area="Admin" asp-controller="Match" asp-action="Index" class="btn btn-secondary btn-sm">← Back</a>
+</div>
 
-            <div class="alert alert-info mt-3">
-                <strong>@Model.HomeTeam</strong> vs <strong>@Model.AwayTeam</strong>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="prediction-form-card">
+
+            <div class="match-banner">
+                @Model.HomeTeam
+                <span style="color:rgba(255,255,255,0.5); font-size:1rem;"> vs </span>
+                @Model.AwayTeam
             </div>
 
-            <form asp-area="Admin" asp-controller="Match" asp-action="EnterResult" asp-route-id="@Model.MatchId" method="post" class="mt-4">
+            <form asp-area="Admin" asp-controller="Match" asp-action="EnterResult"
+                  asp-route-id="@Model.MatchId" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="MatchId" />
                 <input type="hidden" asp-for="HomeTeam" />
                 <input type="hidden" asp-for="AwayTeam" />
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="HomeGoals" class="form-label"></label>
-                        <input asp-for="HomeGoals" class="form-control" />
+                <div class="row g-4 mb-4">
+                    <div class="col-6">
+                        <label asp-for="HomeGoals" class="form-label">@Model.HomeTeam Goals</label>
+                        <div class="rz-stepper">
+                            <button type="button" class="rz-stepper__btn"
+                                    onclick="var i=document.getElementById('HomeGoals');var v=parseInt(i.value)||0;if(v>0)i.value=v-1;">
+                                −
+                            </button>
+                            <input asp-for="HomeGoals" id="HomeGoals" type="number"
+                                   min="0" max="20" value="0"
+                                   style="font-family:'Bebas Neue',sans-serif;font-size:2rem;text-align:center;border:none;background:transparent;color:var(--white);width:100%;" />
+                            <button type="button" class="rz-stepper__btn rz-stepper__btn--plus"
+                                    onclick="var i=document.getElementById('HomeGoals');var v=parseInt(i.value)||0;if(v<20)i.value=v+1;">
+                                +
+                            </button>
+                        </div>
                         <span asp-validation-for="HomeGoals" class="text-danger"></span>
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="AwayGoals" class="form-label"></label>
-                        <input asp-for="AwayGoals" class="form-control" />
+                    <div class="col-6">
+                        <label asp-for="AwayGoals" class="form-label">@Model.AwayTeam Goals</label>
+                        <div class="rz-stepper">
+                            <button type="button" class="rz-stepper__btn"
+                                    onclick="var i=document.getElementById('AwayGoals');var v=parseInt(i.value)||0;if(v>0)i.value=v-1;">
+                                −
+                            </button>
+                            <input asp-for="AwayGoals" id="AwayGoals" type="number"
+                                   min="0" max="20" value="0"
+                                   style="font-family:'Bebas Neue',sans-serif;font-size:2rem;text-align:center;border:none;background:transparent;color:var(--white);width:100%;" />
+                            <button type="button" class="rz-stepper__btn rz-stepper__btn--plus"
+                                    onclick="var i=document.getElementById('AwayGoals');var v=parseInt(i.value)||0;if(v<20)i.value=v+1;">
+                                +
+                            </button>
+                        </div>
                         <span asp-validation-for="AwayGoals" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success">Save Result</button>
-                    <a asp-area="Admin" asp-controller="Match" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary flex-grow-1">
+                        Save Result & Calculate Points
+                    </button>
+                    <a asp-area="Admin" asp-controller="Match" asp-action="Index"
+                       class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>
@@ -43,7 +77,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

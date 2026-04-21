@@ -19,7 +19,11 @@ namespace RedZone.Web
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             builder.Services.AddDbContext<RedZoneDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString, sqlOptions =>
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null)));
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -35,7 +39,7 @@ namespace RedZone.Web
             .AddEntityFrameworkStores<RedZoneDbContext>();
 
             builder.Services.AddControllersWithViews();
-            builder.Services.AddSignalR(); // ← ADD THIS
+            builder.Services.AddSignalR();
 
             builder.Services.AddScoped<ICompetitionService, CompetitionService>();
             builder.Services.AddScoped<IMatchService, MatchService>();
@@ -73,7 +77,7 @@ namespace RedZone.Web
             app.MapRazorPages()
                 .WithStaticAssets();
 
-            app.MapHub<LeaderboardHub>("/hubs/leaderboard"); // ← ADD THIS
+            app.MapHub<LeaderboardHub>("/hubs/leaderboard");
 
             using (var scope = app.Services.CreateScope())
             {
@@ -81,8 +85,8 @@ namespace RedZone.Web
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                 var dbContext = scope.ServiceProvider.GetRequiredService<RedZoneDbContext>();
 
+                // Seed roles
                 string[] roles = { "Admin", "User" };
-
                 foreach (var role in roles)
                 {
                     if (!await roleManager.RoleExistsAsync(role))
@@ -91,6 +95,7 @@ namespace RedZone.Web
                     }
                 }
 
+                // Seed Admin account
                 var adminEmail = "adminnew@redzone.com";
                 var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
@@ -111,8 +116,51 @@ namespace RedZone.Web
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
 
+                // Seed Demo account 1
+                var demo1Email = "demo1@gmail.com";
+                var demo1User = await userManager.FindByEmailAsync(demo1Email);
+
+                if (demo1User == null)
+                {
+                    demo1User = new IdentityUser
+                    {
+                        UserName = demo1Email,
+                        Email = demo1Email,
+                        EmailConfirmed = true
+                    };
+
+                    await userManager.CreateAsync(demo1User, "demo123");
+                }
+
+                if (!await userManager.IsInRoleAsync(demo1User, "User"))
+                {
+                    await userManager.AddToRoleAsync(demo1User, "User");
+                }
+
+                // Seed Demo account 2
+                var demo2Email = "demo2@gmail.com";
+                var demo2User = await userManager.FindByEmailAsync(demo2Email);
+
+                if (demo2User == null)
+                {
+                    demo2User = new IdentityUser
+                    {
+                        UserName = demo2Email,
+                        Email = demo2Email,
+                        EmailConfirmed = true
+                    };
+
+                    await userManager.CreateAsync(demo2User, "demo1234");
+                }
+
+                if (!await userManager.IsInRoleAsync(demo2User, "User"))
+                {
+                    await userManager.AddToRoleAsync(demo2User, "User");
+                }
+
                 try
                 {
+                    // Seed Competitions
                     if (!dbContext.Competitions.Any())
                     {
                         var competitions = new List<Competition>
@@ -127,6 +175,7 @@ namespace RedZone.Web
                         await dbContext.SaveChangesAsync();
                     }
 
+                    // Seed Matches
                     if (!dbContext.Matches.Any())
                     {
                         var premierLeagueId = dbContext.Competitions.First(c => c.Name == "Premier League").Id;
@@ -136,19 +185,19 @@ namespace RedZone.Web
 
                         var matches = new List<Match>
                         {
-                            new Match { HomeTeam = "Liverpool", AwayTeam = "Manchester City", MatchDate = new DateTime(2026, 4, 2, 20, 0, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Arsenal", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 4, 5, 19, 45, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Liverpool", AwayTeam = "Real Madrid", MatchDate = new DateTime(2026, 4, 8, 21, 0, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Liverpool", AwayTeam = "Chelsea", MatchDate = new DateTime(2026, 4, 11, 17, 30, 0), CompetitionId = faCupId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Newcastle", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 4, 14, 15, 0, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Liverpool", AwayTeam = "PSG", MatchDate = new DateTime(2026, 4, 17, 21, 0, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Liverpool", AwayTeam = "Tottenham", MatchDate = new DateTime(2026, 4, 20, 16, 30, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Everton", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 4, 23, 14, 0, 0), CompetitionId = eflCupId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Liverpool", AwayTeam = "Manchester United", MatchDate = new DateTime(2026, 4, 26, 18, 30, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Barcelona", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 4, 29, 21, 0, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Liverpool", AwayTeam = "AC Milan", MatchDate = new DateTime(2026, 5, 2, 20, 45, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Brighton", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 5, 5, 16, 0, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
-                            new Match { HomeTeam = "Liverpool", AwayTeam = "West Ham", MatchDate = new DateTime(2026, 5, 8, 19, 30, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Liverpool", AwayTeam = "Manchester City", MatchDate = new DateTime(2026, 5, 3, 15, 0, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Arsenal", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 5, 6, 19, 45, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Liverpool", AwayTeam = "Real Madrid", MatchDate = new DateTime(2026, 5, 9, 21, 0, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Liverpool", AwayTeam = "Chelsea", MatchDate = new DateTime(2026, 5, 12, 17, 30, 0), CompetitionId = faCupId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Newcastle", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 5, 15, 15, 0, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Liverpool", AwayTeam = "PSG", MatchDate = new DateTime(2026, 5, 18, 21, 0, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Liverpool", AwayTeam = "Tottenham", MatchDate = new DateTime(2026, 5, 21, 16, 30, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Everton", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 5, 24, 14, 0, 0), CompetitionId = eflCupId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Liverpool", AwayTeam = "Manchester United", MatchDate = new DateTime(2026, 5, 27, 18, 30, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Barcelona", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 5, 30, 21, 0, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Liverpool", AwayTeam = "AC Milan", MatchDate = new DateTime(2026, 6, 2, 20, 45, 0), CompetitionId = championsLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Brighton", AwayTeam = "Liverpool", MatchDate = new DateTime(2026, 6, 5, 16, 0, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
+                            new Match { HomeTeam = "Liverpool", AwayTeam = "West Ham", MatchDate = new DateTime(2026, 6, 8, 19, 30, 0), CompetitionId = premierLeagueId, Status = MatchStatus.Upcoming },
                         };
 
                         await dbContext.Matches.AddRangeAsync(matches);

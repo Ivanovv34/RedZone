@@ -26,9 +26,9 @@ namespace RedZone.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var model = await matchService.GetAllAsync();
+            var model = await matchService.GetAllAsync(userId: null, page: page, pageSize: 10);
             return View(model);
         }
 
@@ -143,7 +143,6 @@ namespace RedZone.Web.Areas.Admin.Controllers
 
             await matchService.EnterResultAsync(id, model);
             await predictionService.CalculatePointsAsync(id);
-
 
             var leaderboard = await predictionService.GetLeaderboardAsync();
             await hubContext.Clients.All.SendAsync("LeaderboardUpdated", leaderboard);

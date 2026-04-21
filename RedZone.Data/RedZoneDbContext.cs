@@ -16,7 +16,6 @@ namespace RedZone.Data
         public DbSet<Prediction> Predictions { get; set; } = null!;
         public DbSet<MatchResult> MatchResults { get; set; } = null!;
         public DbSet<Comment> Comments { get; set; } = null!;
-
         public DbSet<Notification> Notifications { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -40,6 +39,13 @@ namespace RedZone.Data
                 .WithMany()
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+            builder.Entity<Prediction>()
+                .HasOne(p => p.Match)
+                .WithMany(m => m.Predictions)
+                .HasForeignKey(p => p.MatchId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Prediction>()
                 .HasOne(p => p.User)

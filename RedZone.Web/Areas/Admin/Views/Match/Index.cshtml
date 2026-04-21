@@ -6,7 +6,7 @@
 
 <div class="page-header">
     <h1 class="page-title">Manage <span>Matches</span></h1>
-    <a asp-action="Create" class="btn btn-primary">+ Add Match</a>
+    <a asp-area="Admin" asp-action="Create" class="btn btn-primary">+ Add Match</a>
 </div>
 
 @if (Model.Matches.Any())
@@ -19,6 +19,7 @@
                     <th>Away</th>
                     <th>Date</th>
                     <th>Competition</th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
             </thead>
@@ -26,14 +27,43 @@
                 @foreach (var item in Model.Matches)
                 {
                     <tr>
-                        <td>@item.HomeTeam</td>
-                        <td>@item.AwayTeam</td>
-                        <td>@item.MatchDate.ToString("dd MMM yyyy HH:mm")</td>
-                        <td>@item.CompetitionName</td>
-                        <td class="text-end">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                            <a asp-action="EnterResult" asp-route-id="@item.Id" class="btn btn-sm btn-success">Result</a>
+                        <td style="font-weight:600; color:var(--white);">@item.HomeTeam</td>
+                        <td style="font-weight:600; color:var(--white);">@item.AwayTeam</td>
+                        <td style="color:var(--text-muted); font-size:0.9rem;">
+                            @item.MatchDate.ToString("dd MMM yyyy HH:mm")
+                        </td>
+                        <td>
+                            <span class="comp-badge">@item.CompetitionName</span>
+                        </td>
+                        <td>
+                            @if (item.Status.ToString() == "Finished")
+                            {
+                                <span class="comp-badge"
+                                      style="background:rgba(100,100,100,0.2);color:#aaa;border-color:rgba(150,150,150,0.3);">
+                                    Finished
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="comp-badge"
+                                      style="background:rgba(22,163,74,0.15);color:#4ade80;border-color:rgba(22,163,74,0.3);">
+                                    Upcoming
+                                </span>
+                            }
+                        </td>
+                        <td class="text-end" style="white-space:nowrap;">
+                            <a asp-area="Admin" asp-controller="Match"
+                               asp-action="Edit" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-area="Admin" asp-controller="Match"
+                               asp-action="Delete" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-danger">Delete</a>
+                            @if (item.Status.ToString() != "Finished")
+                            {
+                                <a asp-area="Admin" asp-controller="Match"
+                                   asp-action="EnterResult" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-success">Result</a>
+                            }
                         </td>
                     </tr>
                 }
@@ -46,18 +76,30 @@
         <nav class="mt-4">
             <ul class="pagination justify-content-center">
                 <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+                    <a class="page-link"
+                       asp-area="Admin"
+                       asp-controller="Match"
+                       asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
                 </li>
 
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                        <a class="page-link"
+                           asp-area="Admin"
+                           asp-controller="Match"
+                           asp-action="Index"
+                           asp-route-page="@i">@i</a>
                     </li>
                 }
 
                 <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+                    <a class="page-link"
+                       asp-area="Admin"
+                       asp-controller="Match"
+                       asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage + 1)">Next</a>
                 </li>
             </ul>
         </nav>
@@ -66,7 +108,9 @@
 else
 {
     <div class="empty-state">
+        <div style="font-size:3rem;margin-bottom:1rem;">📅</div>
         <h3>No Matches Yet</h3>
-        <a asp-action="Create" class="btn btn-primary mt-2">Add First Match</a>
+        <p>Start by adding the first match.</p>
+        <a asp-area="Admin" asp-action="Create" class="btn btn-primary mt-2">Add First Match</a>
     </div>
 }
