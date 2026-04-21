@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using RedZone.Services.Core.Interfaces;
 using RedZone.ViewModels.Match;
+using RedZone.Web.Hubs;
 
 namespace RedZone.Web.Areas.Admin.Controllers
 {
@@ -11,137 +13,107 @@ namespace RedZone.Web.Areas.Admin.Controllers
     {
         private readonly IMatchService matchService;
         private readonly IPredictionService predictionService;
+        private readonly IHubContext<LeaderboardHub> hubContext;
 
         public MatchController(
             IMatchService matchService,
-            IPredictionService predictionService)
+            IPredictionService predictionService,
+            IHubContext<LeaderboardHub> hubContext)
         {
             this.matchService = matchService;
             this.predictionService = predictionService;
+            this.hubContext = hubContext;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var model = await this.matchService.GetAllAsync();
-            return this.View(model);
+            var model = await matchService.GetAllAsync();
+            return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var competitions = await this.matchService.GetAllCompetitionsAsync();
-
-            var model = new MatchCreateViewModel
-            {
-                Competitions = competitions
-            };
-
-            return this.View(model);
+            var competitions = await matchService.GetAllCompetitionsAsync();
+            var model = new MatchCreateViewModel { Competitions = competitions };
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MatchCreateViewModel model)
         {
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var competitions = await this.matchService.GetAllCompetitionsAsync();
+                var competitions = await matchService.GetAllCompetitionsAsync();
                 model.Competitions = competitions;
-                return this.View(model);
+                return View(model);
             }
 
-            await this.matchService.CreateAsync(model);
-
-            this.TempData["Toast"] = "Match created successfully.";
-            this.TempData["ToastType"] = "success";
-
-            return this.RedirectToAction(nameof(Index));
+            await matchService.CreateAsync(model);
+            TempData["Toast"] = "Match created successfully.";
+            TempData["ToastType"] = "success";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var model = await this.matchService.GetForEditAsync(id);
+            var model = await matchService.GetForEditAsync(id);
+            if (model == null) return NotFound();
 
-            if (model == null)
-            {
-                return this.NotFound();
-            }
-
-            var competitions = await this.matchService.GetAllCompetitionsAsync();
+            var competitions = await matchService.GetAllCompetitionsAsync();
             model.Competitions = competitions;
-
-            return this.View(model);
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, MatchEditViewModel model)
         {
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var competitions = await this.matchService.GetAllCompetitionsAsync();
+                var competitions = await matchService.GetAllCompetitionsAsync();
                 model.Competitions = competitions;
-                return this.View(model);
+                return View(model);
             }
 
-            var existingMatch = await this.matchService.GetForEditAsync(id);
+            var existingMatch = await matchService.GetForEditAsync(id);
+            if (existingMatch == null) return NotFound();
 
-            if (existingMatch == null)
-            {
-                return this.NotFound();
-            }
-
-            await this.matchService.EditAsync(id, model);
-
-            this.TempData["Toast"] = "Match updated successfully.";
-            this.TempData["ToastType"] = "success";
-
-            return this.RedirectToAction(nameof(Index));
+            await matchService.EditAsync(id, model);
+            TempData["Toast"] = "Match updated successfully.";
+            TempData["ToastType"] = "success";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var model = await this.matchService.GetForDeleteAsync(id);
-
-            if (model == null)
-            {
-                return this.NotFound();
-            }
-
-            return this.View(model);
+            var model = await matchService.GetForDeleteAsync(id);
+            if (model == null) return NotFound();
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var existingMatch = await this.matchService.GetForDeleteAsync(id);
+            var existingMatch = await matchService.GetForDeleteAsync(id);
+            if (existingMatch == null) return NotFound();
 
-            if (existingMatch == null)
-            {
-                return this.NotFound();
-            }
-
-            await this.matchService.DeleteAsync(id);
-
-            this.TempData["Toast"] = "Match deleted successfully.";
-            this.TempData["ToastType"] = "success";
-
-            return this.RedirectToAction(nameof(Index));
+            await matchService.DeleteAsync(id);
+            TempData["Toast"] = "Match deleted successfully.";
+            TempData["ToastType"] = "success";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> EnterResult(int id)
         {
-            var match = await this.matchService.GetByIdAsync(id);
-
-            if (match == null)
-            {
-                return this.NotFound();
-            }
+            var match = await matchService.GetByIdAsync(id);
+            if (match == null) return NotFound();
 
             var model = new EnterMatchResultViewModel
             {
@@ -150,39 +122,35 @@ namespace RedZone.Web.Areas.Admin.Controllers
                 AwayTeam = match.AwayTeam
             };
 
-            return this.View(model);
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EnterResult(int id, EnterMatchResultViewModel model)
         {
-            if (id != model.MatchId)
-            {
-                return this.BadRequest();
-            }
+            if (id != model.MatchId) return BadRequest();
 
-            var match = await this.matchService.GetByIdAsync(id);
+            var match = await matchService.GetByIdAsync(id);
+            if (match == null) return NotFound();
 
-            if (match == null)
-            {
-                return this.NotFound();
-            }
-
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 model.HomeTeam = match.HomeTeam;
                 model.AwayTeam = match.AwayTeam;
-                return this.View(model);
+                return View(model);
             }
 
-            await this.matchService.EnterResultAsync(id, model);
-            await this.predictionService.CalculatePointsAsync(id);
+            await matchService.EnterResultAsync(id, model);
+            await predictionService.CalculatePointsAsync(id);
 
-            this.TempData["Toast"] = "Match result saved. Points calculated!";
-            this.TempData["ToastType"] = "success";
 
-            return this.RedirectToAction(nameof(Index));
+            var leaderboard = await predictionService.GetLeaderboardAsync();
+            await hubContext.Clients.All.SendAsync("LeaderboardUpdated", leaderboard);
+
+            TempData["Toast"] = "Result saved and points calculated!";
+            TempData["ToastType"] = "success";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

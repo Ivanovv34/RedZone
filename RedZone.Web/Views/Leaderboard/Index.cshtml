@@ -4,49 +4,114 @@
     ViewData["Title"] = "Leaderboard";
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-light mb-0">🏆 Leaderboard</h1>
-    </div>
-
-    <div class="card bg-dark border-0 shadow-lg">
-        <div class="card-body">
-            @if (!Model.Any())
-            {
-                <div class="alert alert-info mb-0">
-                    No scored predictions yet.
-                </div>
-            }
-            else
-            {
-                <div class="table-responsive">
-                    <table class="table table-dark table-hover align-middle mb-0">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>User</th>
-                            <th>Total Points</th>
-                            <th>Predictions</th>
-                            <th>Exact Scores</th>
-                            <th>Correct Results</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var entry in Model)
-                        {
-                            <tr>
-                                <td>@entry.Position</td>
-                                <td>@entry.UserName</td>
-                                <td><strong>@entry.TotalPoints</strong></td>
-                                <td>@entry.TotalPredictions</td>
-                                <td>@entry.ExactScores</td>
-                                <td>@entry.CorrectResults</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            }
-        </div>
-    </div>
+<div class="page-header">
+    <h1 class="page-title">🏆 Leader<span>board</span></h1>
+    <span id="live-indicator" class="live-badge">● LIVE</span>
 </div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div style="font-size:3rem;margin-bottom:1rem;">🏆</div>
+        <h3>No Scored Predictions Yet</h3>
+        <p>Leaderboard will appear once match results are entered.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive" id="leaderboard-table">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Player</th>
+                    <th>Points</th>
+                    <th>Predictions</th>
+                    <th>Exact Scores</th>
+                    <th>Correct Results</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                @foreach (var entry in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (entry.Position == 1)
+                            {
+                                <span style="font-size:1.2rem;">🥇</span>
+                            }
+                            else if (entry.Position == 2)
+                            {
+                                <span style="font-size:1.2rem;">🥈</span>
+                            }
+                            else if (entry.Position == 3)
+                            {
+                                <span style="font-size:1.2rem;">🥉</span>
+                            }
+                            else
+                            {
+                                @entry.Position
+                            }
+                        </td>
+                        <td style="font-weight:600; color:var(--white);">@entry.UserName</td>
+                        <td>
+                            <span style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--gold);">
+                                @entry.TotalPoints
+                            </span>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">pts</span>
+                        </td>
+                        <td style="color:var(--text-muted);">@entry.TotalPredictions</td>
+                        <td>
+                            <span class="comp-badge" style="background:rgba(22,163,74,0.15);color:#4ade80;border-color:rgba(22,163,74,0.3);">
+                                @entry.ExactScores
+                            </span>
+                        </td>
+                        <td>
+                            <span class="comp-badge">@entry.CorrectResults</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/leaderboard")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("LeaderboardUpdated", function (entries) {
+            const tbody = document.getElementById("leaderboard-body");
+            if (!tbody) {
+                // table didn't exist (was empty state), reload page
+                window.location.reload();
+                return;
+            }
+
+            const medals = ["🥇", "🥈", "🥉"];
+            tbody.innerHTML = entries.map(e => `
+                <tr class="leaderboard-flash">
+                    <td>${e.position <= 3 ? medals[e.position - 1] : e.position}</td>
+                    <td style="font-weight:600;color:var(--white);">${e.userName}</td>
+                    <td>
+                        <span style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);">${e.totalPoints}</span>
+                        <span style="font-size:0.75rem;color:var(--text-muted);">pts</span>
+                    </td>
+                    <td style="color:var(--text-muted);">${e.totalPredictions}</td>
+                    <td><span class="comp-badge" style="background:rgba(22,163,74,0.15);color:#4ade80;border-color:rgba(22,163,74,0.3);">${e.exactScores}</span></td>
+                    <td><span class="comp-badge">${e.correctResults}</span></td>
+                </tr>
+            `).join("");
+
+            const indicator = document.getElementById("live-indicator");
+            indicator.classList.add("live-badge--flash");
+            setTimeout(() => indicator.classList.remove("live-badge--flash"), 1000);
+        });
+
+        connection.start().catch(err => console.error("SignalR error:", err));
+    </script>
+}
